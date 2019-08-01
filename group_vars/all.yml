@@ -1,0 +1,18 @@
+---
+# This variables file will include all available role variables.
+# It makes it easier to know what's available to change.
+# defaults file for mydotfiles
+
+### my-common-packages vars
+# not shown it's too long and should be changed fairly rarely
+
+### packages for cli-packages install task
+cli_packages:
+  # - ffmpeg
+  # - lm_sensors
+  # - pandoc
+  # - python-psutil
+  # - python-neovim # consider putting these in a python dev env role?
+  # - nodejs # consider putting into a nvm/node/npm role also have it install node neovim helper
+  # - npm # same as above
+  # - yarn # same as above

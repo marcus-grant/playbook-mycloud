@@ -1,0 +1,14 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Install python for ansible
+      raw: test -e /usr/bin/python || (apt install python)
+      become: yes
+      changed_when: no
+    - name: Upgrade packages
+      become: yes
+      apt:
+        update_cache: yes
+        upgrade: yes
