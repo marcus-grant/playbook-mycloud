@@ -1,0 +1,7 @@
+---
+- name: marcus-grant.mydotfiles
+  src: https://github.com/marcus-grant/role-mydotfiles
+  version: master
+- name: marcus-grant.common-packages
+  src: https://github.com/marcus-grant/role-my-common-packages
+  version: master

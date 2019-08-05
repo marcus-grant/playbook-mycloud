@@ -7,7 +7,7 @@
 # not shown it's too long and should be changed fairly rarely
 
 ### packages for cli-packages install task
-cli_packages:
+# cli_packages:
   # - ffmpeg
   # - lm_sensors
   # - pandoc
