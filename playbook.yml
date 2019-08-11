@@ -5,5 +5,5 @@
     # - import_tasks: tasks/cli-packages.yml
     # - import_tasks: tasks/gui-packages.yml
   roles:
-    - roles/my-common-packages
+    - { name: roles/my-common-packages, become: yes }
     - marcus-grant.mydotfiles

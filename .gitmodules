@@ -1,3 +1,3 @@
-[submodule "roles/role-my-common-packages"]
-	path = roles/role-my-common-packages
-	url = git@github.com:marcus-grant/role-my-common-packages.git
+[submodule "roles/my-common-packages"]
+	path = roles/my-common-packages
+	url = git@github.com:marcus-grant/role-my-common-packages
