@@ -1,9 +1,9 @@
 ---
 - hosts: all
   gather_facts: yes
-  pre_tasks:
+  # pre_tasks:
     # - import_tasks: tasks/cli-packages.yml
     # - import_tasks: tasks/gui-packages.yml
   roles:
-    - { name: roles/my-common-packages, become: yes }
+    - marcus-grant.common-packages
     - marcus-grant.mydotfiles

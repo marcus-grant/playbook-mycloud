@@ -19,12 +19,6 @@ dotfiles:
     links:
       - { dest: '~/.vim', src: '~/.dots/vim' }
       - { dest: '~/.vimrc', src: '~/.dots/vim/vimrc' }
-  neovim:
-    repo_name: 'dots-neovim'
-    local_subdir_name: 'neovim'
-    version: 'master'
-    links:
-      - { dest: '~/.config/nvim', src: '~/.dots/neovim' }
   tmux:
     repo_name: 'dots-tmux'
     local_subdir_name: 'tmux'

@@ -27,6 +27,7 @@ ANSIBLE_FORCE_COLOR=true
 ANSIBLE_HOST_KEY_CHECKING=false
 ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=60s'
 ANSIBLE_STDOUT_CALLBACK=debug
+export ANSIBLE_NOCOW=1
 
 # Debug message before running play
 echo "Running playbook.yml for vagrant instance..."

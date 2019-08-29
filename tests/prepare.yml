@@ -7,6 +7,10 @@
       raw: test -e /usr/bin/python || (apt install python)
       become: yes
       changed_when: no
+    # - name: update package cache
+    #   become: yes
+    #   apt:
+    #     update_cache: yes
     - name: Upgrade packages
       become: yes
       apt:

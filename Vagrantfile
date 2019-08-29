@@ -4,9 +4,11 @@ Vagrant.configure(2) do |config|
     # config.vm.box = "archlinux-gnome"
     config.vm.box = "generic/debian10"
     # config.ssh.insert_key = false
-    config.vm.provider "virtualbox" do |v|
-        v.cpus = 2
-        v.memory = 4096
+    config.vm.provider :virtualbox do |vb|
+        vb.cpus = 2
+        vb.memory = 4096
+        # for taking DNS from host NAT
+        # vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         # v.gui = true
         # v.name = "test-workstation"
     end
