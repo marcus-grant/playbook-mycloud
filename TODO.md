@@ -4,7 +4,12 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Extra play installing docker on workstations (archlinux family using pacman)
+    - geerlinguyr's docker role doesn't work on archlinux family
+    - the archlinux workstations will have do docker slightly different as well
+    - make sure you're using overlay2 or whatever the current hotness is
 - [ ] Try geerlingguy's docker role
+- [ ] Become different users like root & marcus for dotfiles role
 - [ ] NTP role
 
 Planning
@@ -25,6 +30,7 @@ Future
 ------
 
 - [ ] NFS server role
+- [ ] Geerlingguy's pip role which allows ansible-building of docker images from ansible
 
 Completed
 ---------

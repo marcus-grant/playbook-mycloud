@@ -3,6 +3,9 @@ Vagrant.require_version ">= 2.0.0"
 Vagrant.configure(2) do |config|
     # config.vm.box = "archlinux-gnome"
     config.vm.box = "generic/debian10"
+    # take notes on this in the ansible+vagrant notes document
+    # taken from : http://bit.ly/2Hy04DN
+    # config.vm.define "test-deb-server"
     # config.ssh.insert_key = false
     config.vm.provider :virtualbox do |vb|
         vb.cpus = 2

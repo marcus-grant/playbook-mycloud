@@ -7,3 +7,11 @@
   roles:
     - marcus-grant.common-packages
     - marcus-grant.mydotfiles
+
+# These will only be done on 'homeservers' group ie metal servers owned
+- hosts: homeservers
+  gather_facts: yes
+  tasks:
+    - debug: { msg: 'hello homeservers' }
+    # - include_role:
+    #     name: geerlingguy.docker

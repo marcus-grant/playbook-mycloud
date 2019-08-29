@@ -17,7 +17,8 @@ get-script-dir(){
 scriptDir="$(get-script-dir)"
 projectDir="$(dirname $(dirname $scriptDir))"
 pBook="$projectDir/playbook.yml"
-invent="$projectDir/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory"
+# invent="$projectDir/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory"
+invent="$projectDir/hosts.yml"
 privateKey="$projectDir/.vagrant/machines/default/virtualbox/private_key"
 pBookUser="vagrant"
 
@@ -28,6 +29,9 @@ ANSIBLE_HOST_KEY_CHECKING=false
 ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=60s'
 ANSIBLE_STDOUT_CALLBACK=debug
 export ANSIBLE_NOCOW=1
+# solution to man in the middle ssh warnings on host PC
+# solution comes from this ansible issue: http://bit.ly/2HyLvQg
+export ANSIBLE_HOST_KEY_CHECKING=False
 
 # Debug message before running play
 echo "Running playbook.yml for vagrant instance..."
