@@ -15,6 +15,7 @@ In-Progress
 Planning
 --------
 
+- [ ] Add prompt & arg for specifying path to vault key so you don't have to share its path
 - [ ] Some role or tasks to manage images for each host
 - [ ] Docker: Portainer
 - [ ] Docker: Nextcloud
