@@ -6,4 +6,7 @@ all:
           ansible_host: 127.0.0.1
           ansible_port: 2222
           ansible_user: vagrant
-          become_method: sudo
+        # freyr:
+        #   # ansible_hobst: 192.168.1.12
+        #   ansible_port: 22
+        #   ansible_user: marcus

@@ -1,12 +1,14 @@
 ---
 - hosts: all
   gather_facts: yes
-  # pre_tasks:
-    # - import_tasks: tasks/cli-packages.yml
-    # - import_tasks: tasks/gui-packages.yml
   roles:
-    - marcus-grant.common-packages
-    - marcus-grant.mydotfiles
+    - role: marcus-grant.common-packages
+      become: yes
+    - role: marcus-grant.mydotfiles
+    - role: marcus-grant.mydotfiles
+      allow_duplicates: yes
+      become: yes
+      remote_user: root
 
 # These will only be done on 'homeservers' group ie metal servers owned
 - hosts: homeservers

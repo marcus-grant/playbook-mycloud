@@ -1,6 +1,0 @@
----
-# test role
-
-- hosts: test
-  roles:
-    - { role: test }
