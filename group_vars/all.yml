@@ -18,6 +18,20 @@
   # - yarn # same as above
 
 # dotfiles root directory, where all seperate dotfiles subdirectories go
+
+# docker install settings geerlingguy.docker github link: http://bit.ly/2HwZPZG
+docker_install: yes
+docker_edition: 'ce' # ce or ee
+docker_package_state: latest # present, absent, or latest
+docker_service_state: started # (started) | stopped *
+docker_service_enabled: yes # (yes/true) | no/false *
+docker_restart_handler_state: restarted # what to do with service after role
+docker_install_compose: yes # (true) | false
+# docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
+docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
+
+
+# dotfiles role variables
 dotfiles_local_root_dir: '~/.dots'
 dotfiles_git_server_base_url: 'github.com'
 dotfiles_git_username: 'marcus-grant'
@@ -51,3 +65,6 @@ dotfiles:
     links:
       - { dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf' }
       - { dest: '~/.tmux.conf.local', src: '~/.dots/tmux/.tmux.conf.local' }
+  
+# Comments Appendix
+# * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it

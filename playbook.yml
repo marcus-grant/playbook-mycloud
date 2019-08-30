@@ -13,7 +13,15 @@
 # These will only be done on 'homeservers' group ie metal servers owned
 - hosts: homeservers
   gather_facts: yes
-  tasks:
-    - debug: { msg: 'hello homeservers' }
-    # - include_role:
-    #     name: geerlingguy.docker
+  roles:
+    - role: geerlingguy.docker
+      become: yes
+
+# These are workstations that double as servers with different handling
+# - hosts: workstations
+#   gather_facts: yes
+#   tasks:
+#     - name: docker is instaled using pacman
+#       pacman:
+#         name: docker
+#         state: present
