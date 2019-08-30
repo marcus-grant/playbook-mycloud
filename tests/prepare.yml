@@ -3,16 +3,26 @@
   hosts: all
   gather_facts: yes
   tasks:
-    - name: Install python for ansible
+    - name: install python for ansible
       raw: test -e /usr/bin/python || (apt install python)
       become: yes
       changed_when: no
-    # - name: update package cache
-    #   become: yes
-    #   apt:
-    #     update_cache: yes
-    - name: Upgrade packages
+    - name: upgrade packages
       become: yes
       apt:
         update_cache: yes
         upgrade: yes
+    - name: sshd_config uses internal-sftp subsystem instead of sftp-server
+      become: yes
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "\\bSubsystem\\s+\\bsftp+\\s+([A-z|/|-])*"
+        line: "Subsystem sftp internal-sftp"
+      notify: restart sshd
+  handlers:
+    - name: restart sshd
+      become: yes
+      service:
+        name: sshd
+        state: restarted
+        enabled: yes
