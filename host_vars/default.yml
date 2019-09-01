@@ -26,3 +26,20 @@ dotfiles:
     links:
       - { dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf' }
       - { dest: '~/.tmux.conf.local', src: '~/.dots/tmux/.tmux.conf.local' }
+
+# ntp role
+# ntp_enabled: no # (true) | false don't use on containerized VM (docker/virtbox)
+# ntp_timezone: America/New_York # (Etc/UTC) | many others
+# ntp role http://bit.ly/2HBSJ67 <- README
+ntp_enabled: yes # (true) | false don't use on containerized VM (docker/virtbox)
+ntp_timezone: America/New_York # (Etc/UTC) | many others (America/New_York)
+ntp_manage_config: yes # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: '' # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
+ntp_servers: # defaults to below world pool (only works manage config)
+  - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+ntp_restrict: # whitelists access for these hosts, loopback only by default
+  - "127.0.0.1"
+  - "::1"

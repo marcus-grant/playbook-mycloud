@@ -4,17 +4,17 @@ To-Do's
 In-Progress
 -----------
 
-- [ ] NTP role
+- [ ] Docker: Portainer
+- [ ] Docker: UniFi-Controller
+- [ ] Docker: Nextcloud
+- [ ] Docker: Gitea
 
 Planning
 --------
 
+- [ ] Some role or tasks to manage docker images for each host
 - [ ] Add prompt & arg for specifying path to vault key so you don't have to share its path
-- [ ] Some role or tasks to manage images for each host
-- [ ] Docker: Portainer
-- [ ] Docker: Nextcloud
-- [ ] Docker: UniFi-Controller
-- [ ] Docker: Gitea
+- [ ] Create testing provisioning/inventory that starts multiple representative VMs
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
     - AWX / Semaphore / ARA on thor
@@ -51,6 +51,7 @@ Future
 Completed
 ---------
 
+- [x] NTP role
 - [x] Become different users like root & marcus for dotfiles role
 - [x] Try geerlingguy's docker role
 - [x] Apply common packages role (after editing to work on debian)

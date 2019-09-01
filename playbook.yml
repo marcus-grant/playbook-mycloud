@@ -9,6 +9,8 @@
       allow_duplicates: yes
       become: yes
       remote_user: root
+    - role: geerlingguy.ntp
+      become: yes
 
 # These will only be done on 'homeservers' group ie metal servers owned
 - hosts: homeservers
