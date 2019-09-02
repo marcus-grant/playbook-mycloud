@@ -7,20 +7,22 @@
       raw: test -e /usr/bin/python || (apt install python)
       become: yes
       changed_when: no
+    - name: install aptitude
+      become: yes
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
     - name: upgrade packages
       become: yes
-      apt:
-        update_cache: yes
-        upgrade: yes
+      apt: update_cache=yes upgrade=yes
     - name: sshd_config uses internal-sftp subsystem instead of sftp-server
       become: yes
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "\\bSubsystem\\s+\\bsftp+\\s+([A-z|/|-])*"
         line: "Subsystem sftp internal-sftp"
-      notify: restart sshd
-  handlers:
-    - name: restart sshd
+      notify:
+        - 'restart sshd'
+  handlers: # TODO: needs work, doesn't seem to actually restart sshd
+    - name: restart sshd 
       become: yes
       service:
         name: sshd

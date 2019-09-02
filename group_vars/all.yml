@@ -17,20 +17,6 @@
   # - npm # same as above
   # - yarn # same as above
 
-# dotfiles root directory, where all seperate dotfiles subdirectories go
-
-# docker install settings geerlingguy.docker github link: http://bit.ly/2HwZPZG
-docker_install: yes
-docker_edition: 'ce' # ce or ee
-docker_package_state: latest # present, absent, or latest
-docker_service_state: started # (started) | stopped *
-docker_service_enabled: yes # (yes/true) | no/false *
-docker_restart_handler_state: restarted # what to do with service after role
-docker_install_compose: yes # (true) | false
-# docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
-docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
-
-
 # dotfiles role variables
 dotfiles_local_root_dir: '~/.dots'
 dotfiles_git_server_base_url: 'github.com'
@@ -65,7 +51,7 @@ dotfiles:
     links:
       - { dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf' }
       - { dest: '~/.tmux.conf.local', src: '~/.dots/tmux/.tmux.conf.local' }
-
+  
 # ntp role http://bit.ly/2HBSJ67 <- README
 ntp_enabled: yes # (true) | false don't use on containerized VM (docker/virtbox)
 ntp_timezone: Etc/UTC # (Etc/UTC) | many others
@@ -79,6 +65,36 @@ ntp_servers: # defaults to below world pool (only works manage config)
 ntp_restrict: # whitelists access for these hosts, loopback only by default
   - "127.0.0.1"
   - "::1"
+
+# pip role vars
+# this can also include other pip packages
+pip_install_packages:
+  - name: docker
+  - name: docker-py
+
+# docker install settings geerlingguy.docker github link: http://bit.ly/2HwZPZG
+docker_install: yes
+docker_edition: 'ce' # ce or ee
+docker_package_state: latest # present, absent, or latest
+docker_service_state: started # (started) | stopped *
+docker_service_enabled: yes # (yes/true) | no/false *
+docker_restart_handler_state: restarted # what to do with service after role
+docker_install_compose: yes # (true) | false
+#docker_users: # use to add users to docker group
+# docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
+docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
+
+# Docker container management
+docker_home: /docker
+
+###
+### Portainer Docker Settings
+###
+portainer:
+  enabled: yes
+  data_directory: '{{ docker_home }}/portainer/config'
+  traefik_enabled: no
+  memory: 512M
   
 # Comments Appendix
 # * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it

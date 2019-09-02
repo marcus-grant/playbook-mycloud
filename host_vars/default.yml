@@ -43,3 +43,14 @@ ntp_servers: # defaults to below world pool (only works manage config)
 ntp_restrict: # whitelists access for these hosts, loopback only by default
   - "127.0.0.1"
   - "::1"
+
+# docker install settings geerlingguy.docker github link: http://bit.ly/2HwZPZG
+docker_install: yes
+docker_edition: 'ce' # ce or ee
+docker_package_state: latest # present, absent, or latest
+docker_service_state: started # (started) | stopped *
+docker_service_enabled: yes # (yes/true) | no/false *
+docker_restart_handler_state: restarted # what to do with service after role
+docker_install_compose: yes # (true) | false
+# docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
+docker_compose_path: /usr/local/bin/docker-compose # path to compose bin

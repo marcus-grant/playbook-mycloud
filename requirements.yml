@@ -7,3 +7,4 @@
   version: master
 - name: geerlingguy.ntp
 - name: geerlingguy.docker
+# - name: geerlingguy.pip

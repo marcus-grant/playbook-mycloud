@@ -13,13 +13,17 @@ Planning
 --------
 
 - [ ] Some role or tasks to manage docker images for each host
+- [ ] Make sure aptitude gets installed on all debian servers before any other task
+- [ ] Make sure pip is installed then the python docker module so ansible can easily manage docker
+- [ ] Refactor the `become`'s in playbook and associated tasks
+    - even though the geerlingguy.docker role already does this, but make sure it's done before
 - [ ] Add prompt & arg for specifying path to vault key so you don't have to share its path
 - [ ] Create testing provisioning/inventory that starts multiple representative VMs
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
     - AWX / Semaphore / ARA on thor
-- [ ] Replacement for Plex (emby?)
 - [ ] Docker: Traefik
+- [ ] Replacement for Plex (emby?)
 - [ ] Extra play installing docker on workstations (archlinux family using pacman)
     - geerlinguyr's docker role doesn't work on archlinux family
     - the archlinux workstations will have do docker slightly different as well
@@ -29,6 +33,7 @@ Future
 ------
 
 - [ ] Docker: Code-Server or MS's solution
+- [ ] Docker: Refactor docker_server_env task
 - [ ] Docker: Home-Assistant
 - [ ] Docker: CouchPotato
 - [ ] Docker: Sonarr
@@ -45,12 +50,16 @@ Future
 - [ ] Geerlingguy's pip role which allows ansible-building of docker images from ansible
 - [ ] First kubernetes plays
 - [ ] Docker: beets
-- [ ] Docker: grocy
 - [ ] Docker: thelounge
+- [ ] Docker: grocy
+- [ ] Docker: Watchtower
+- [ ] Docker: Couchpotato
+- [ ] Docker: Heimdal
 
 Completed
 ---------
 
+- [x] Task to bootstrap docker environment (docker_home)
 - [x] NTP role
 - [x] Become different users like root & marcus for dotfiles role
 - [x] Try geerlingguy's docker role

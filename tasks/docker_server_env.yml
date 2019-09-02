@@ -1,0 +1,50 @@
+---
+- name: 'docker home directory exists @ {{ docker_home }}'
+  # become: yes
+  file:
+    path: "{{ docker_home }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: 0770
+
+# TODO: during a refactor, check if this is necessary with geerlinguys role
+- name: install needed docker management dependencies
+  apt: name={{ item }} state=latest update_cache=yes
+  loop:
+    - python-setuptools
+    - python-pip
+    - python-docker
+    - python3-setuptools
+    - python3-pip
+    - python3-docker
+    - virtualenv
+
+# Fix bug where system-level ssl_match_hostname module installed @ sys level
+# Taken from this stack overflow http://bit.ly/2HCMwXO
+# - name: fix debian 10 docker-py dependency bug, uninstall pip2 version
+#   pip:
+#     name: docker-py
+#     state: absent
+#     executable: pip2
+# # Same for python3
+# - name: fix debian 10 docker-py dependency bug, uninstall pip3 version
+#   pip:
+#     name: docker
+#     state: absent
+#     executable: pip3
+
+
+
+# - name: ensure python (pip) docker-ppy module installed
+#   # become: yes
+#   pip:
+#     name: docker-py
+#     executable: pip2
+# - name: ensure python 3 (pip) docker module installed
+#   # become: yes
+#   pip:
+#     name: docker
+#     executable: pip3
+
+
