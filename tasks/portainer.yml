@@ -1,0 +1,27 @@
+---
+- name: portainer docker directory exists
+  file:
+    path: '{{ portainer.data_directory }}'
+    state: directory
+    owner: root
+    group: docker
+    mode: 0770
+- name: portainer docker container
+  become: yes
+  docker_container:
+    name: portainer
+    image: portainer/portainer
+    pull: yes
+    volumes:
+      - '{{ portainer.data_directory }}:/data:rw'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    ports:
+      - '9000:9000'
+    restart_policy: unless-stopped
+    # memory: '{{ portainer.memory }}' # TODO: Come up with sensible mem limit
+    # labels: TODO: integrate when traefik is setup
+    #   traefik.backend: 'portainer'
+    #   traefik.frontend.rule: 'Host:portainer.{{ mycloud_domain }}'
+    #   traefik.enable: '{{ portainer.traefik_enabled }}'
+    #   traefik.port: 9000

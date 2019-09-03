@@ -94,7 +94,7 @@ portainer:
   enabled: yes
   data_directory: '{{ docker_home }}/portainer/config'
   traefik_enabled: no
-  memory: 512M
+  # memory: 768M # TODO: Come up with sensible memory limit
   
 # Comments Appendix
 # * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it

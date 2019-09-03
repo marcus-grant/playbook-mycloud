@@ -20,7 +20,15 @@
         regexp: "\\bSubsystem\\s+\\bsftp+\\s+([A-z|/|-])*"
         line: "Subsystem sftp internal-sftp"
       notify:
-        - 'restart sshd'
+        - restart sshd
+    # - name: stop sshd
+    #   become: yes
+    #   service:
+    #     name: sshd
+    #     state: stopped
+    #     enabled: yes
+      # notify:
+      #   - restart sshd
   handlers: # TODO: needs work, doesn't seem to actually restart sshd
     - name: restart sshd 
       become: yes

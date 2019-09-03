@@ -17,6 +17,8 @@ Planning
 - [ ] Make sure pip is installed then the python docker module so ansible can easily manage docker
 - [ ] Refactor the `become`'s in playbook and associated tasks
     - even though the geerlingguy.docker role already does this, but make sure it's done before
+- [ ] Refactor roles & tasks to show less skipped outputs depending on OS & host
+    - this [tip](http://bit.ly/2HGIZaV) might help
 - [ ] Add prompt & arg for specifying path to vault key so you don't have to share its path
 - [ ] Create testing provisioning/inventory that starts multiple representative VMs
 - [ ] Start splitting docker containers by inventory groups
@@ -32,6 +34,7 @@ Planning
 Future
 ------
 
+- [ ] Automate a swap space, swappiness and memory limits of docker
 - [ ] Docker: Code-Server or MS's solution
 - [ ] Docker: Refactor docker_server_env task
 - [ ] Docker: Home-Assistant

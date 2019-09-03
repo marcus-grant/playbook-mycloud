@@ -2,15 +2,15 @@
 - hosts: all
   gather_facts: yes
   roles:
-    - role: marcus-grant.common-packages
-      become: yes
-    - role: marcus-grant.mydotfiles
-    - role: marcus-grant.mydotfiles
-      allow_duplicates: yes
-      become: yes
-      remote_user: root
-    - role: geerlingguy.ntp
-      become: yes
+    # - role: marcus-grant.common-packages
+    #   become: yes
+    # - role: marcus-grant.mydotfiles
+    # - role: marcus-grant.mydotfiles
+    #   allow_duplicates: yes
+    #   become: yes
+    #   remote_user: root
+    # - role: geerlingguy.ntp
+    #   become: yes
 
 # These will only be done on 'homeservers' group ie metal servers owned
 - hosts: homeservers
@@ -24,7 +24,12 @@
   tasks:
     - import_tasks: tasks/docker_server_env.yml
       become: yes
+    - import_tasks: tasks/portainer.yml
       become: yes
+      when: (portainer.enabled | default(False))
+      tags: portainer
+    # placeholder for traefik, should appear near beginning after portainer
+
 
 # These are workstations that double as servers with different handling
 # - hosts: workstations
