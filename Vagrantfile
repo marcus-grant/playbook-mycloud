@@ -5,6 +5,14 @@ Vagrant.configure(2) do |config|
     config.vm.box = "generic/debian10"
     # TODO: Temporary portforwarding before traefik gets used
     config.vm.network "forwarded_port", guest: 9000, host: 9000
+    config.vm.network "forwarded_port", guest: 3478, host: 3478
+    config.vm.network "forwarded_port", guest: 10001, host: 10001
+    config.vm.network "forwarded_port", guest: 8080, host: 8080
+    config.vm.network "forwarded_port", guest: 8081, host: 8081
+    config.vm.network "forwarded_port", guest: 8443, host: 8443
+    config.vm.network "forwarded_port", guest: 8843, host: 8843
+    config.vm.network "forwarded_port", guest: 8880, host: 8880
+    config.vm.network "forwarded_port", guest: 6789, host: 6789
     config.vm.network "private_network", ip: "192.168.99.12"
     # take notes on this in the ansible+vagrant notes document
     # taken from : http://bit.ly/2Hy04DN

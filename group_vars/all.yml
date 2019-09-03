@@ -1,21 +1,6 @@
 ---
-# This variables file will include all available role variables.
-# It makes it easier to know what's available to change.
-# defaults file for mydotfiles
-
-### my-common-packages vars
-# not shown it's too long and should be changed fairly rarely
-
-### packages for cli-packages install task
-# cli_packages:
-  # - ffmpeg
-  # - lm_sensors
-  # - pandoc
-  # - python-psutil
-  # - python-neovim # consider putting these in a python dev env role?
-  # - nodejs # consider putting into a nvm/node/npm role also have it install node neovim helper
-  # - npm # same as above
-  # - yarn # same as above
+# General variables
+time_zone: America/New_York
 
 # dotfiles role variables
 dotfiles_local_root_dir: '~/.dots'
@@ -54,7 +39,7 @@ dotfiles:
   
 # ntp role http://bit.ly/2HBSJ67 <- README
 ntp_enabled: yes # (true) | false don't use on containerized VM (docker/virtbox)
-ntp_timezone: Etc/UTC # (Etc/UTC) | many others
+ntp_timezone: '{{ time_zone }}' # (Etc/UTC) | many others
 ntp_manage_config: yes # (false) | true, whether to manage /etc/ntp.conf
 ntp_area: '' # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
 ntp_servers: # defaults to below world pool (only works manage config)
@@ -96,5 +81,14 @@ portainer:
   traefik_enabled: no
   # memory: 768M # TODO: Come up with sensible memory limit
   
+###
+### UniFi Docker Settings
+###
+unifi:
+  enabled: yes
+  data_directory: '{{ docker_home }}/unifi'
+  traefik_enabled: no
+  # memory: 768M # TODO: Come up with sensible memory limit
+
 # Comments Appendix
 # * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it

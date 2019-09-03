@@ -7,7 +7,7 @@
     group: docker
     mode: 0770
 - name: portainer docker container
-  become: yes
+  # become: yes
   docker_container:
     name: portainer
     image: portainer/portainer

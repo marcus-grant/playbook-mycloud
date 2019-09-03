@@ -28,6 +28,10 @@
       become: yes
       when: (portainer.enabled | default(False))
       tags: portainer
+    - import_tasks: tasks/unifi.yml
+      become: yes
+      when: (unifi.enabled | default(False))
+      tags: unifi
     # placeholder for traefik, should appear near beginning after portainer
 
 
