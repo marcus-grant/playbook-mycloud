@@ -4,7 +4,7 @@ To-Do's
 In-Progress
 -----------
 
-- [ ] Docker: Nextcloud & Its database
+- [ ] Docker: Traefik
 - [ ] Docker: Gitea
 
 Planning
@@ -22,7 +22,6 @@ Planning
 - [ ] Create testing provisioning/inventory that starts multiple representative VMs
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
-- [ ] Docker: Traefik
 
 Future
 ------
@@ -64,6 +63,7 @@ Future
 Completed
 ---------
 
+- [x] Docker: Nextcloud & Its database
 - [x] Docker: UniFi-Controller
 - [x] Docker: Portainer
 - [x] Task to bootstrap docker environment (docker_home)
