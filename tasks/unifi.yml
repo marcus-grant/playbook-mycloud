@@ -1,7 +1,7 @@
 ---
 - name: create unifi docker data directory
   file:
-    path: '{{ unifi.data_directory }}'
+    path: '{{ unifi_docker_directory }}'
     state: directory
     owner: root
     group: docker
@@ -14,7 +14,7 @@
     pull: yes
     restart_policy: unless-stopped
     volumes:
-      - '{{ unifi.data_directory }}:/config'
+      - '{{ unifi_docker_directory }}:/config'
     env:
       PGID: '997'
       PUID: '1000'

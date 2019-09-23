@@ -57,9 +57,14 @@ pip_install_packages:
   - name: docker
   - name: docker-py
 
-# docker install settings geerlingguy.docker github link: http://bit.ly/2HwZPZG
+###
+### Docker Install & Daemon Settings
+###
 docker_install: yes
 docker_edition: 'ce' # ce or ee
+docker_home: /mnt/docker
+docker_image_directory: '{{ docker_home }}/images'
+docker_storage_driver: overlay2
 docker_package_state: latest # present, absent, or latest
 docker_service_state: started # (started) | stopped *
 docker_service_enabled: yes # (yes/true) | no/false *
@@ -69,26 +74,51 @@ docker_install_compose: yes # (true) | false
 # docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
 docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
 
-# Docker container management
-docker_home: /docker
 
 ###
 ### Portainer Docker Settings
 ###
-portainer:
-  enabled: yes
-  data_directory: '{{ docker_home }}/portainer/config'
-  traefik_enabled: no
-  # memory: 768M # TODO: Come up with sensible memory limit
+portainer_enabled: yes
+portainer_docker_directory: '{{ docker_home }}/portainer/config'
+portainer_traefik_enabled: no
+# portainer_memory: 768M # TODO: Come up with sensible memory limit
   
+###
+### Nextcloud Docker Settings
+###
+nextcloud_enabled: yes
+nextcloud_host_data_directory: '/mnt/main/nc'
+nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
+nextcloud_db_user: vagrant # should probably be admin user acct. or 
+nextcloud_db_user_password: vagrant
+nextcloud_db_root_password: vagrant
+nextcloud_db_memory: 768M
+nextcloud_app_memory: 768M
+nextcloud_app_port: 10000
+nextcloud_app_data_user: www-data
+nextcloud_domain: '{{ secret_nextcloud_domain }}'
+nextcloud_traefik_enabled: no
+nextcloud_trusted_domains: >-
+  localhost
+  127.0.0.1
+  192.168.99.12
+
+
 ###
 ### UniFi Docker Settings
 ###
-unifi:
-  enabled: yes
-  data_directory: '{{ docker_home }}/unifi'
-  traefik_enabled: no
-  # memory: 768M # TODO: Come up with sensible memory limit
+unifi_enabled: yes
+unifi_docker_directory: '{{ docker_home }}/unifi'
+unifi_traefik_enabled: no
+# portainer_memory: 768M # TODO: Come up with sensible memory limit
 
 # Comments Appendix
 # * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it
+
+###
+### Secrets (Vagrant Testing Default Passwords, Real Systems on external file)
+###
+secret_nextcloud_db_root_passwd: vagrant
+secret_nextcloud_db_user_passwd: vagrant
+secret_nextcloud_db_host: 127.0.0.1
+secret_nextcloud_domain: test.local

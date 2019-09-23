@@ -20,6 +20,26 @@
     - python3-docker
     - virtualenv
 
+- name: 'ensure ansible user is added to docker group'
+  user:
+    name: '{{ ansible_ssh_user }}'
+    groups: docker
+    append: yes
+    shell: /bin/bash
+
+- name: change docker root/home directory from defaults
+  template:
+    src: docker/daemon.json
+    dest: /etc/docker/daemon.json
+  register: docker_config
+
+- name: restart docker if dameon config changed
+  become: yes
+  service:
+    name: docker
+    state: restarted
+  when: docker_config.changed
+
 # Fix bug where system-level ssl_match_hostname module installed @ sys level
 # Taken from this stack overflow http://bit.ly/2HCMwXO
 # - name: fix debian 10 docker-py dependency bug, uninstall pip2 version

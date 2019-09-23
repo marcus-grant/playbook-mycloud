@@ -4,8 +4,7 @@ To-Do's
 In-Progress
 -----------
 
-- [ ] Docker: UniFi-Controller
-- [ ] Docker: Nextcloud
+- [ ] Docker: Nextcloud & Its database
 - [ ] Docker: Gitea
 
 Planning
@@ -34,6 +33,7 @@ Future
     - the archlinux workstations will have do docker slightly different as well
     - make sure you're using overlay2 or whatever the current hotness is
 - [ ] Automate a swap space, swappiness and memory limits of docker
+- [ ] Split the nextcloud app and db containers between tasks to be used on different servers
 - [ ] Docker: AWX / Semaphore / ARA on thor
 - [ ] Docker: Code-Server or MS's solution
 - [ ] Docker: Refactor docker_server_env task
@@ -59,10 +59,12 @@ Future
 - [ ] Docker: Watchtower
 - [ ] Docker: Couchpotato
 - [ ] Docker: Heimdal
+- [ ] Docker: consider changing the nextcloud image to `fpm` tag and proxy traefik to it
 
 Completed
 ---------
 
+- [x] Docker: UniFi-Controller
 - [x] Docker: Portainer
 - [x] Task to bootstrap docker environment (docker_home)
 - [x] Make sure pip is installed then the python docker module so ansible can easily manage docker

@@ -13,6 +13,12 @@
     - name: upgrade packages
       become: yes
       apt: update_cache=yes upgrade=yes
+    - name: nextcloud testing directories exist
+      become: yes
+      file:
+        path: /mnt/main
+        state: directory
+        owner: www-data
     - name: sshd_config uses internal-sftp subsystem instead of sftp-server
       become: yes
       lineinfile:
