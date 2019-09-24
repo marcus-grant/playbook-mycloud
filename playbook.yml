@@ -2,15 +2,15 @@
 - hosts: all
   gather_facts: yes
   roles:
-    - role: marcus-grant.common-packages
-      become: yes
-    - role: marcus-grant.mydotfiles
-    - role: marcus-grant.mydotfiles
-      allow_duplicates: yes
-      become: yes
-      remote_user: root
-    - role: geerlingguy.ntp
-      become: yes
+    # - role: marcus-grant.common-packages
+    #   become: yes
+    # - role: marcus-grant.mydotfiles
+    # - role: marcus-grant.mydotfiles
+    #   allow_duplicates: yes
+    #   become: yes
+    #   remote_user: root
+    # - role: geerlingguy.ntp
+    #   become: yes
 
 # These will only be done on 'homeservers' group ie metal servers owned
 - hosts: homeservers
@@ -27,10 +27,10 @@
       when: (portainer_enabled | default(False))
       tags: portainer
     # placeholder for traefik, should appear near beginning after portainer
-    - import_tasks: tasks/unifi.yml
-      become: yes
-      when: (unifi_enabled | default(False))
-      tags: unifi
+    # - import_tasks: tasks/unifi.yml
+    #   become: yes
+    #   when: (unifi_enabled | default(False))
+    #   tags: unifi
     - import_tasks: tasks/nextcloud.yml
       become: yes
       when: (nextcloud_enabled | default(False))

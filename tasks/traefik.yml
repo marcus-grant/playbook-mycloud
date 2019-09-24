@@ -1,0 +1,12 @@
+---
+- name: traefik directories present
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - '{{ traefik_data_directory }}'
+
+- name: ensure traefik's config.toml present
+  template:
+    src: traefik/traefik.toml
+    dest: '{{ traefik_data_directory }}/traefik.toml'
