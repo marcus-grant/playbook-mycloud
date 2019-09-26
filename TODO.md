@@ -4,13 +4,13 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Add prompt & args for run script for actual system that hides keys
 - [ ] Docker: Traefik
 - [ ] Docker: Gitea
 
 Planning
 --------
 
-- [ ] Add ansible_ssh_user to docker group
 - [ ] Some role or tasks to manage docker images for each host
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Add yourself or some other user as part of the docker group
@@ -18,7 +18,6 @@ Planning
     - even though the geerlingguy.docker role already does this, but make sure it's done before
 - [ ] Refactor roles & tasks to show less skipped outputs depending on OS & host
     - this [tip](http://bit.ly/2HGIZaV) might help
-- [ ] Add prompt & arg for specifying path to vault key so you don't have to share its path
 - [ ] Create testing provisioning/inventory that starts multiple representative VMs
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
@@ -63,6 +62,7 @@ Future
 Completed
 ---------
 
+- [x] Add ansible_ssh_user to docker group
 - [x] Docker: Nextcloud & Its database
 - [x] Docker: UniFi-Controller
 - [x] Docker: Portainer

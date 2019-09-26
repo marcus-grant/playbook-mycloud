@@ -112,6 +112,12 @@ unifi_docker_directory: '{{ docker_home }}/unifi'
 unifi_traefik_enabled: no
 # portainer_memory: 768M # TODO: Come up with sensible memory limit
 
+###
+### Traefik
+###
+traefik_enabled: yes
+traefik_data_directory: '{{ docker_home }}/traefik'
+
 # Comments Appendix
 # * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it
 
