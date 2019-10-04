@@ -13,7 +13,7 @@ dotfiles:
     local_subdir_name: 'bash'
     version: 'master'
     links:
-      - { dest: '~/.bashrc', src: '~/.dots/bash/bashrc' }
+      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc' }
       - { dest: '~/.profile', src: '~/.dots/bash/profile' }
       - { dest: '~/.bash_profile', src: '~/.dots/bash/bash_profile' }
   vim:
@@ -60,7 +60,7 @@ pip_install_packages:
 ###
 ### Docker Install & Daemon Settings
 ###
-docker_install: yes
+docker_install: no
 docker_edition: 'ce' # ce or ee
 docker_home: /mnt/docker
 docker_image_directory: '{{ docker_home }}/images'
@@ -78,7 +78,7 @@ docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
 ###
 ### Portainer Docker Settings
 ###
-portainer_enabled: yes
+portainer_enabled: no
 portainer_docker_directory: '{{ docker_home }}/portainer/config'
 portainer_traefik_enabled: no
 # portainer_memory: 768M # TODO: Come up with sensible memory limit
@@ -86,7 +86,7 @@ portainer_traefik_enabled: no
 ###
 ### Nextcloud Docker Settings
 ###
-nextcloud_enabled: yes
+nextcloud_enabled: no
 nextcloud_host_data_directory: '/mnt/main/nc'
 nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
 nextcloud_db_user: vagrant # should probably be admin user acct. or 
@@ -107,7 +107,7 @@ nextcloud_trusted_domains: >-
 ###
 ### UniFi Docker Settings
 ###
-unifi_enabled: yes
+unifi_enabled: no
 unifi_docker_directory: '{{ docker_home }}/unifi'
 unifi_traefik_enabled: no
 # portainer_memory: 768M # TODO: Come up with sensible memory limit
@@ -115,11 +115,36 @@ unifi_traefik_enabled: no
 ###
 ### Traefik
 ###
-traefik_enabled: yes
+traefik_enabled: no
 traefik_data_directory: '{{ docker_home }}/traefik'
 
+###
+### Hosts
+###
+# Net Appliances occupy subnet address x.1~15
+secret_bifrost_local_ip: '{{ secret_nyc_subnet }}.1'  # router
+secret_asgard_local_ip: '{{ secret_nyc_subnet }}.4'  # unifi access point (main)
+# Servers occupy subnet address x.16~31
+secret_frigg_local_ip: '{{ secret_nyc_subnet }}.16'
+secret_jord_local_ip: '{{ secret_nyc_subnet }}.17'
+secret_freyja_local_ip: '{{ secret_nyc_subnet }}.31'
+# Personal Devices  address x.32~63 (Desktops/Laptops/Mobiles)
+secret_thor_local_ip: '{{ secret_nyc_subnet }}.32'  # main desk workstion/server
+secret_odin_local_ip: '{{ secret_nyc_subnet }}.33'
+secret_tyr_local_ip: '{{ secret_nyc_subnet }}.34'  # lil laptop linux
+secret_loki_local_ip: '{{ secret_nyc_subnet }}.35'  # big laptop windows
+secret_huginn_local_ip: '{{ secret_nyc_subnet }}.36'  # main phone
+secret_muninn_local_ip: '{{ secret_nyc_subnet }}.37'  # main tablet
+# IoT & embedded addresses x.64~191
+secret_octoprint_local_ip: '{{ secret_nyc_subnet }}.64'
+# DHCP Miscellaneous reserved for odd uses x.192~250
+secret_nyc_dhcp_range_start: 192
+secret_nyc_dhcp_range_end: 250
+
 # Comments Appendix
-# * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it
+# * if when testing things out in nested docker containers you want to -
+# make sure that you're testing the presence of the docker install without -
+# actually running it - disable the service & don't run it
 
 ###
 ### Secrets (Vagrant Testing Default Passwords, Real Systems on external file)
