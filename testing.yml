@@ -1,8 +1,16 @@
+---
 all:
   children:
-    homeservers:
+    # homeservers:
+    #   hosts:
+    #     default:  # the vagrant testing server
+    #       ansible_host: 127.0.0.1
+    #       ansible_port: 2222
+    #       ansible_user: vagrant
+    #       become_method: sudo
+    ocean:
       hosts:
-        default: # the vagrant testing server
+        snori:  # the vagrant testing server
           ansible_host: 127.0.0.1
           ansible_port: 2222
           ansible_user: vagrant

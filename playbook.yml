@@ -1,45 +1,54 @@
 ---
-- hosts: all
-  gather_facts: yes
-  roles:
-    - role: marcus-grant.common-packages
-      become: yes
-    - role: marcus-grant.mydotfiles
-    - role: marcus-grant.mydotfiles
-      allow_duplicates: yes
-      become: yes
-      remote_user: root
-    - role: geerlingguy.ntp
-      become: yes
+# - hosts: all
+#   gather_facts: true
+#   become: true
+#   roles:
+#     - role: marcus-grant.common-packages
+#     - role: marcus-grant.mydotfiles
+#     - role: marcus-grant.mydotfiles
+#       allow_duplicates: true
+#       become_user: '{{ ansible_user }}'
+#     - role: geerlingguy.ntp
+#     - role: geerlingguy.docker
+#       when: >
+#         ansible_os_family == "Debian" or
+#         ansible_os_family == "RedHat"
 
 # These will only be done on 'homeservers' group ie metal servers owned
-- hosts: homeservers
-  gather_facts: yes
-  roles:
-    - name: geerlingguy.docker
-      become: yes
+# - hosts: homeservers
+#   gather_facts: true
+#   roles:
+#     - name: geerlingguy.docker
+#       become: true
+#   tasks:
+#     - import_tasks: tasks/docker_post_install.yml
+#       become: true
+#     - import_tasks: tasks/portainer.yml
+#       become: true
+#       when: (portainer_enabled | default(False))
+#       tags: portainer
+#     # placeholder for traefik, should appear near beginning after portainer
+#     - import_tasks: tasks/unifi.yml
+#       become: true
+#       when: (unifi_enabled | default(False))
+#       tags: unifi
 
+- hosts: ocean
+  gather_facts: true
+  become: true
+  vars_files:
+    - group_vars/vault.yml
   tasks:
-    - import_tasks: tasks/docker_post_install.yml
-      become: yes
-    - import_tasks: tasks/portainer.yml
-      become: yes
-      when: (portainer_enabled | default(False))
-      tags: portainer
-    # placeholder for traefik, should appear near beginning after portainer
-    - import_tasks: tasks/unifi.yml
-      become: yes
-      when: (unifi_enabled | default(False))
-      tags: unifi
-    - import_tasks: tasks/nextcloud.yml
-      become: yes
+    - include_tasks: tasks/docker_post_install.yml
+      when: docker_install | default(False)
+    - include_tasks: tasks/nextcloud.yml
       when: (nextcloud_enabled | default(False))
       tags: nextcloud
 
 
 # These are workstations that double as servers with different handling
 # - hosts: workstations
-#   gather_facts: yes
+#   gather_facts: true
 #   tasks:
 #     - name: docker is instaled using pacman
 #       pacman:
