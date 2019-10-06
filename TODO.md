@@ -5,13 +5,24 @@ In-Progress
 -----------
 
 - [ ] Add prompt & args for run script for actual system that hides keys
+- [ ] Encrypted inventory `production.yml`
+- [ ] Digital Ocean inventory definitions & group vars
+- [ ] Move nextcloud to ocean group
+- [ ] Run scripts, for ocean
 - [ ] Docker: Traefik
-- [ ] Docker: Gitea
+- [ ] Nextcloud: Configure for S3 primary storage
+- [ ] Nextcloud: Deploy to ocean
+- [ ] Replacement for Plex (emby?, jellyfin?)
+- [ ] Traefik: home deployment
 
 Planning
 --------
 
-- [ ] Some role or tasks to manage docker images for each host
+- [ ] Docker: Gitea
+- [ ] Best combination of services for:
+-   - [ ] Personal music streaming
+-   - [ ] External streaming service aggregation
+-   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Add yourself or some other user as part of the docker group
 - [ ] Refactor the `become`'s in playbook and associated tasks
@@ -19,13 +30,14 @@ Planning
 - [ ] Refactor roles & tasks to show less skipped outputs depending on OS & host
     - this [tip](http://bit.ly/2HGIZaV) might help
 - [ ] Create testing provisioning/inventory that starts multiple representative VMs
+- [ ] TICK stack on nyc for testing out use cases
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
 
 Future
 ------
 
-- [ ] Replacement for Plex (emby?)
+- [ ] Some role or tasks to manage docker images for each host
 - [ ] Extra play installing docker on workstations (archlinux family using pacman)
     - geerlinguyr's docker role doesn't work on archlinux family
     - the archlinux workstations will have do docker slightly different as well
