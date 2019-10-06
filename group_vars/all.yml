@@ -73,6 +73,7 @@ docker_install_compose: yes # (true) | false
 #docker_users: # use to add users to docker group
 # docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
 docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
+docker_group_admin_user: false
 
 
 ###
@@ -117,29 +118,6 @@ unifi_traefik_enabled: no
 ###
 traefik_enabled: no
 traefik_data_directory: '{{ docker_home }}/traefik'
-
-###
-### Hosts
-###
-# Net Appliances occupy subnet address x.1~15
-secret_bifrost_local_ip: '{{ secret_nyc_subnet }}.1'  # router
-secret_asgard_local_ip: '{{ secret_nyc_subnet }}.4'  # unifi access point (main)
-# Servers occupy subnet address x.16~31
-secret_frigg_local_ip: '{{ secret_nyc_subnet }}.16'
-secret_jord_local_ip: '{{ secret_nyc_subnet }}.17'
-secret_freyja_local_ip: '{{ secret_nyc_subnet }}.31'
-# Personal Devices  address x.32~63 (Desktops/Laptops/Mobiles)
-secret_thor_local_ip: '{{ secret_nyc_subnet }}.32'  # main desk workstion/server
-secret_odin_local_ip: '{{ secret_nyc_subnet }}.33'
-secret_tyr_local_ip: '{{ secret_nyc_subnet }}.34'  # lil laptop linux
-secret_loki_local_ip: '{{ secret_nyc_subnet }}.35'  # big laptop windows
-secret_huginn_local_ip: '{{ secret_nyc_subnet }}.36'  # main phone
-secret_muninn_local_ip: '{{ secret_nyc_subnet }}.37'  # main tablet
-# IoT & embedded addresses x.64~191
-secret_octoprint_local_ip: '{{ secret_nyc_subnet }}.64'
-# DHCP Miscellaneous reserved for odd uses x.192~250
-secret_nyc_dhcp_range_start: 192
-secret_nyc_dhcp_range_end: 250
 
 # Comments Appendix
 # * if when testing things out in nested docker containers you want to -

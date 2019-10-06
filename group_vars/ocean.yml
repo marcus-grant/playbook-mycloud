@@ -1,0 +1,91 @@
+---
+### General
+time_zone: America/New_York
+
+### NTP
+# ntp role http://bit.ly/2HBSJ67 <- README
+ntp_enabled: yes # (true) | false don't use on containerized VM (docker/virtbox)
+ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
+ntp_manage_config: yes # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: '' # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
+ntp_servers: # defaults to below world pool (only works manage config)
+  - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+ntp_restrict: # whitelists access for these hosts, loopback only by default
+  - "127.0.0.1"
+  - "::1"
+
+### Dotfiles
+dotfiles_local_root_dir: '~/.dots'
+dotfiles_git_server_base_url: 'github.com'
+dotfiles_git_username: 'marcus-grant'
+dotfiles_use_ssh: true
+dotfiles:
+  bash:
+    repo_name: 'dots-bash'
+    local_subdir_name: 'bash'
+    version: 'master'
+    links:
+      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc'}
+      - {dest: '~/.profile', src: '~/.dots/bash/profile'}
+      - {dest: '~/.bash_profile', src: '~/.dots/bash/bash_profile'}
+  vim:
+    repo_name: 'dots-vim'
+    local_subdir_name: 'vim'
+    version: 'master'
+    links:
+      - {dest: '~/.vim', src: '~/.dots/vim'}
+      - {dest: '~/.vimrc', src: '~/.dots/vim/vimrc'}
+  neovim:
+    repo_name: 'dots-neovim'
+    local_subdir_name: 'neovim'
+    version: 'master'
+    links:
+      - {dest: '~/.config/nvim', src: '~/.dots/neovim'}
+  tmux:
+    repo_name: 'dots-tmux'
+    local_subdir_name: 'tmux'
+    version: 'master'
+    links:
+      - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
+      - {dest: '~/.tmux.conf.local', src: '~/.dots/tmux/.tmux.conf.local'}
+
+
+### Docker
+docker_install: yes
+docker_edition: ce
+docker_home: /mnt/docker
+docker_image_directory: '{{ docker_home }}/images'
+docker_storage_driver: overlay2
+docker_package_state: present
+docker_service_enabled: true
+docker_restart_handler_state: restarted
+docker_install_compose: true
+# docker_users (won't be adding admin to this group now for security)
+docker_compose_path: /usr/local/bin/docker-compose
+
+### Docker Post Install
+docker_group_admin_user: false
+
+
+### Traefik ( TODO )
+traefik_enabled: false
+traefik_data_directory: '{{ docker_home }}/traefik'
+
+
+### Nextcloud
+nextcloud_enabled: true
+nextcloud_host_data_directory: '/mnt/main/nc'
+nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
+nextcloud_db_user: '{{ vault_nextcloud_db_user }}'
+nextcloud_db_user_passwd: '{{ vault_nextcloud_db_user_passwd }}'
+nextcloud_db_root_passwd: '{{ vault_nextcloud_db_root_passwd }}'
+# nextcloud_db_memory: 768M
+# nextcloud_app_memory: 768M
+nextcloud_app_port: 10000
+nextcloud_app_data_user: www-data
+nextcloud_domain: '{{ secret_nextcloud_domain }}'
+nextcloud_traefik_enabled: true
+nextcloud_trusted_domains: '{{ vault_nextcloud_trusted_domains }}'
