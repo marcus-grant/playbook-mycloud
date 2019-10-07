@@ -1,6 +1,6 @@
 ---
 - name: 'docker home directory exists @ {{ docker_home }}'
-  # become: yes
+  # become: true
   file:
     path: "{{ docker_home }}"
     state: directory
@@ -9,8 +9,9 @@
     mode: 0770
 
 # TODO: during a refactor, check if this is necessary with geerlinguys role
+# TODO: this needs to be handled differently for non debian based OSs
 - name: install needed docker management dependencies
-  apt: name={{ item }} state=latest update_cache=yes
+  apt: name={{ item }} state=latest update_cache=true
   loop:
     - python-setuptools
     - python-pip
@@ -24,8 +25,9 @@
   user:
     name: '{{ ansible_ssh_user }}'
     groups: docker
-    append: yes
+    append: true
     shell: /bin/bash
+  when: docker_group_admin_user | default(False)
 
 - name: change docker root/home directory from defaults
   template:
@@ -34,7 +36,7 @@
   register: docker_config
 
 - name: restart docker if dameon config changed
-  become: yes
+  become: true
   service:
     name: docker
     state: restarted
@@ -55,16 +57,13 @@
 #     executable: pip3
 
 
-
 # - name: ensure python (pip) docker-ppy module installed
-#   # become: yes
+#   # become: true
 #   pip:
 #     name: docker-py
 #     executable: pip2
 # - name: ensure python 3 (pip) docker module installed
-#   # become: yes
+#   # become: true
 #   pip:
 #     name: docker
 #     executable: pip3
-
-

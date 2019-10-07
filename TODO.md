@@ -5,28 +5,35 @@ In-Progress
 -----------
 
 - [ ] Docker: Traefik
-- [ ] Docker: Gitea
+- [ ] Nextcloud: Configure for S3 primary storage
+- [ ] Nextcloud: Deploy to ocean
+- [ ] Replacement for Plex (emby?, jellyfin?)
+- [ ] Traefik: home deployment
 
 Planning
 --------
 
-- [ ] Add ansible_ssh_user to docker group
-- [ ] Some role or tasks to manage docker images for each host
+- [ ] Docker: Gitea
+- [ ] Best combination of services for:
+-   - [ ] Personal music streaming
+-   - [ ] External streaming service aggregation
+-   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Add yourself or some other user as part of the docker group
+- [ ] Test: Make selectable vagrant definition for ocean group machine
 - [ ] Refactor the `become`'s in playbook and associated tasks
     - even though the geerlingguy.docker role already does this, but make sure it's done before
 - [ ] Refactor roles & tasks to show less skipped outputs depending on OS & host
     - this [tip](http://bit.ly/2HGIZaV) might help
-- [ ] Add prompt & arg for specifying path to vault key so you don't have to share its path
 - [ ] Create testing provisioning/inventory that starts multiple representative VMs
+- [ ] TICK stack on nyc for testing out use cases
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
 
 Future
 ------
 
-- [ ] Replacement for Plex (emby?)
+- [ ] Some role or tasks to manage docker images for each host
 - [ ] Extra play installing docker on workstations (archlinux family using pacman)
     - geerlinguyr's docker role doesn't work on archlinux family
     - the archlinux workstations will have do docker slightly different as well
@@ -63,6 +70,13 @@ Future
 Completed
 ---------
 
+- [x] Test: Make ocean grouped test vms have domain names that can be accessed
+- [x] Add prompt & args for run script for actual system that hides keys
+- [x] Encrypted inventory `production.yml`
+- [x] Digital Ocean inventory definitions & group vars
+- [x] Move nextcloud to ocean group
+- [x] Run scripts, for ocean
+- [x] Add ansible_ssh_user to docker group
 - [x] Docker: Nextcloud & Its database
 - [x] Docker: UniFi-Controller
 - [x] Docker: Portainer

@@ -13,7 +13,7 @@ dotfiles:
     local_subdir_name: 'bash'
     version: 'master'
     links:
-      - { dest: '~/.bashrc', src: '~/.dots/bash/bashrc' }
+      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc' }
       - { dest: '~/.profile', src: '~/.dots/bash/profile' }
       - { dest: '~/.bash_profile', src: '~/.dots/bash/bash_profile' }
   vim:
@@ -60,7 +60,7 @@ pip_install_packages:
 ###
 ### Docker Install & Daemon Settings
 ###
-docker_install: yes
+docker_install: no
 docker_edition: 'ce' # ce or ee
 docker_home: /mnt/docker
 docker_image_directory: '{{ docker_home }}/images'
@@ -73,12 +73,13 @@ docker_install_compose: yes # (true) | false
 #docker_users: # use to add users to docker group
 # docker_compose_version: "1.22.0" defaults to latest, just leave blank for now
 docker_compose_path: /usr/local/bin/docker-compose # path to compose bin
+docker_group_admin_user: false
 
 
 ###
 ### Portainer Docker Settings
 ###
-portainer_enabled: yes
+portainer_enabled: no
 portainer_docker_directory: '{{ docker_home }}/portainer/config'
 portainer_traefik_enabled: no
 # portainer_memory: 768M # TODO: Come up with sensible memory limit
@@ -86,7 +87,7 @@ portainer_traefik_enabled: no
 ###
 ### Nextcloud Docker Settings
 ###
-nextcloud_enabled: yes
+nextcloud_enabled: no
 nextcloud_host_data_directory: '/mnt/main/nc'
 nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
 nextcloud_db_user: vagrant # should probably be admin user acct. or 
@@ -107,13 +108,21 @@ nextcloud_trusted_domains: >-
 ###
 ### UniFi Docker Settings
 ###
-unifi_enabled: yes
+unifi_enabled: no
 unifi_docker_directory: '{{ docker_home }}/unifi'
 unifi_traefik_enabled: no
 # portainer_memory: 768M # TODO: Come up with sensible memory limit
 
+###
+### Traefik
+###
+traefik_enabled: no
+traefik_data_directory: '{{ docker_home }}/traefik'
+
 # Comments Appendix
-# * if when testing things out in nested docker containers you want to make sure that you're testing the presence of the docker install without actually running it - disable the service & don't run it
+# * if when testing things out in nested docker containers you want to -
+# make sure that you're testing the presence of the docker install without -
+# actually running it - disable the service & don't run it
 
 ###
 ### Secrets (Vagrant Testing Default Passwords, Real Systems on external file)
