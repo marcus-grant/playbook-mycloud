@@ -15,11 +15,12 @@ get-script-dir(){
 # Script Args
 scriptDir="$(get-script-dir)"
 projectDir="$(dirname $(dirname $(dirname $scriptDir)))"
+vmName="deb0"
 pBook="$projectDir/playbook.yml"
 # invent="$projectDir/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory"
 # invent="$projectDir/hosts.yml"
 invent="$projectDir/testing.yml"
-privateKey="$projectDir/.vagrant/machines/default/virtualbox/private_key"
+privateKey="$projectDir/.vagrant/machines/$vmName/virtualbox/private_key"
 pBookUser="vagrant"
 
 # Ansible env vars for running its commands

@@ -4,11 +4,6 @@ To-Do's
 In-Progress
 -----------
 
-- [ ] Add prompt & args for run script for actual system that hides keys
-- [ ] Encrypted inventory `production.yml`
-- [ ] Digital Ocean inventory definitions & group vars
-- [ ] Move nextcloud to ocean group
-- [ ] Run scripts, for ocean
 - [ ] Docker: Traefik
 - [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Nextcloud: Deploy to ocean
@@ -25,6 +20,7 @@ Planning
 -   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Add yourself or some other user as part of the docker group
+- [ ] Test: Make selectable vagrant definition for ocean group machine
 - [ ] Refactor the `become`'s in playbook and associated tasks
     - even though the geerlingguy.docker role already does this, but make sure it's done before
 - [ ] Refactor roles & tasks to show less skipped outputs depending on OS & host
@@ -74,6 +70,12 @@ Future
 Completed
 ---------
 
+- [x] Test: Make ocean grouped test vms have domain names that can be accessed
+- [x] Add prompt & args for run script for actual system that hides keys
+- [x] Encrypted inventory `production.yml`
+- [x] Digital Ocean inventory definitions & group vars
+- [x] Move nextcloud to ocean group
+- [x] Run scripts, for ocean
 - [x] Add ansible_ssh_user to docker group
 - [x] Docker: Nextcloud & Its database
 - [x] Docker: UniFi-Controller

@@ -1,18 +1,18 @@
 ---
-# - hosts: all
-#   gather_facts: true
-#   become: true
-#   roles:
-#     - role: marcus-grant.common-packages
-#     - role: marcus-grant.mydotfiles
-#     - role: marcus-grant.mydotfiles
-#       allow_duplicates: true
-#       become_user: '{{ ansible_user }}'
-#     - role: geerlingguy.ntp
-#     - role: geerlingguy.docker
-#       when: >
-#         ansible_os_family == "Debian" or
-#         ansible_os_family == "RedHat"
+- hosts: all
+  gather_facts: true
+  become: true
+  roles:
+    - role: marcus-grant.common-packages
+    - role: marcus-grant.mydotfiles
+    - role: marcus-grant.mydotfiles
+      allow_duplicates: true
+      become_user: '{{ ansible_user }}'
+    - role: geerlingguy.ntp
+    - role: geerlingguy.docker
+      when: >
+        ansible_os_family == "Debian" or
+        ansible_os_family == "RedHat"
 
 # These will only be done on 'homeservers' group ie metal servers owned
 # - hosts: homeservers
