@@ -1,19 +1,21 @@
 ---
 ### General
 time_zone: America/New_York
+domain_base: '{{ vault_base_domain_ocean }}'
+
 
 ### NTP
 # ntp role http://bit.ly/2HBSJ67 <- README
-ntp_enabled: yes # (true) | false don't use on containerized VM (docker/virtbox)
+ntp_enabled: true  # (true) | false don't use on containerized VM (docker/vbox)
 ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
-ntp_manage_config: yes # (false) | true, whether to manage /etc/ntp.conf
-ntp_area: '' # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
-ntp_servers: # defaults to below world pool (only works manage config)
+ntp_manage_config: true  # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: ''  # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
+ntp_servers:  # defaults to below world pool (only works manage config)
   - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
   - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
   - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
   - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-ntp_restrict: # whitelists access for these hosts, loopback only by default
+ntp_restrict:  # whitelists access for these hosts, loopback only by default
   - "127.0.0.1"
   - "::1"
 
@@ -54,7 +56,7 @@ dotfiles:
 
 
 ### Docker
-docker_install: yes
+docker_install: true
 docker_edition: ce
 docker_home: /mnt/docker
 docker_image_directory: '{{ docker_home }}/images'
@@ -70,9 +72,17 @@ docker_compose_path: /usr/local/bin/docker-compose
 docker_group_admin_user: false
 
 
-### Traefik ( TODO )
-traefik_enabled: false
+### Traefik
+traefik_enabled: true
 traefik_data_directory: '{{ docker_home }}/traefik'
+traefik_docker_image: traefik:latest
+traefik_debug: false
+traefik_http_port: 10080
+traefik_https_port: 100443
+traefik_admin_port: 8083
+# double quotes around each full domain with comma then newline delimits
+traefik_certified_domains: >
+  \"next.{{ domain_base }}\"
 
 
 ### Nextcloud

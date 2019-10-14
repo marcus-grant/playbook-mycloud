@@ -19,12 +19,17 @@ Vagrant.configure(2) do |config|
             # deb0.vm.network "forwarded_port", guest: 8843, host: 8843
             # deb0.vm.network "forwarded_port", guest: 8880, host: 8880
             # deb0.vm.network "forwarded_port", guest: 6789, host: 6789
+            deb0.vm.hostname = "mydomain.com"
             # unifi ends
             # TODO: Temporary portforwarding before traefik gets used
             deb0.vm.network "forwarded_port", guest: 9000, host: 9999 # portainer
             deb0.vm.network "forwarded_port", guest: 10002, host: 10002
             deb0.vm.network "forwarded_port", guest: 10000, host: 10000
             deb0.vm.network "private_network", ip: "192.168.99.12"
+            # traefik forwarded ports
+            deb0.vm.network "forwarded_port", guest: 8083, host:8083
+            deb0.vm.network "forwarded_port", guest: 80, host:80
+            deb0.vm.network "forwarded_port", guest: 443, host:443
             # take notes on this in the ansible+vagrant notes document
             # taken from : http://bit.ly/2Hy04DN
             # config.vm.define "test-deb-server"

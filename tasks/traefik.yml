@@ -10,3 +10,18 @@
   template:
     src: traefik/traefik.toml
     dest: '{{ traefik_data_directory }}/traefik.toml'
+
+- name: traefik docker container
+  docker_container:
+    name: traefik
+    image: '{{ traefik_docker_image }}'
+    pull: true
+    ports:
+      - "{{ traefik_http_port }}:80"
+      - "{{ traefik_https_port }}:443"
+      - "{{ traefik_admin_port }}:8083"
+    volumes:
+      - "{{ traefik_data_directory }}/traefik.toml:/etc/traefik/traefik.toml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart_policy: unless-stopped
+    # memory: "{{ traefik_memory_limit }}"

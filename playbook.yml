@@ -41,6 +41,9 @@
   tasks:
     - include_tasks: tasks/docker_post_install.yml
       when: docker_install | default(False)
+    - include_tasks: tasks/traefik.yml
+      when: traefik_enabled | default(False)
+      tags: traefik
     - include_tasks: tasks/nextcloud.yml
       when: (nextcloud_enabled | default(False))
       tags: nextcloud
