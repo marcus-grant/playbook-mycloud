@@ -1,0 +1,32 @@
+---
+- name: ensure ufw present
+  apt:
+    name: ufw
+    state: present
+  
+- name: configure ufw defaults (all out, no in)
+  ufw: direction={{ item.direction }} policy={{ item.policy }}
+  loop:
+    - { direction: 'incoming', policy: 'deny' }
+    - { direction: 'outgoing', policy: 'allow' }
+  notify:
+    - restart ufw
+
+# TODO: reorganize specific rule like SSH & Traefik or just rename to UFW.yml?
+- name: configure ufw rules
+  ufw: rule={{ item.rule }} port={{ item.port }} proto={{ item.proto }}
+  loop:
+    - { rule: 'limit', port: '{{ ansible_port }}', proto: 'tcp' }
+    - { rule: 'allow', port: '80', proto: 'tcp' }
+    - { rule: 'allow', port: '443', proto: 'tcp' }
+  notify:
+    - restart ufw
+  
+# TODO: add enable ufw logging with condition?
+# - name: enable ufw logging
+#   ufw: logging=on
+#   notify:
+#     - restart ufw
+
+- name: enable ufw
+  ufw: state=enabled

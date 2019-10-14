@@ -4,10 +4,6 @@
   become: true
   roles:
     - role: marcus-grant.common-packages
-    - role: marcus-grant.mydotfiles
-    - role: marcus-grant.mydotfiles
-      allow_duplicates: true
-      become_user: '{{ ansible_user }}'
     - role: geerlingguy.ntp
     - role: geerlingguy.docker
       when: >
@@ -21,6 +17,10 @@
 #     - name: geerlingguy.docker
 #       become: true
 #   tasks:
+    # - role: marcus-grant.mydotfiles
+    # - role: marcus-grant.mydotfiles
+    #   allow_duplicates: true
+    #   become_user: '{{ ansible_user }}'
 #     - import_tasks: tasks/docker_post_install.yml
 #       become: true
 #     - import_tasks: tasks/portainer.yml
@@ -38,15 +38,18 @@
   become: true
   vars_files:
     - group_vars/vault.yml
+  handlers:
+    - import_tasks: handlers.yml
   tasks:
+    - include_tasks: tasks/ufw-traefik.yml
     - include_tasks: tasks/docker_post_install.yml
       when: docker_install | default(False)
-    - include_tasks: tasks/traefik.yml
-      when: traefik_enabled | default(False)
-      tags: traefik
-    - include_tasks: tasks/nextcloud.yml
-      when: (nextcloud_enabled | default(False))
-      tags: nextcloud
+    # - include_tasks: tasks/traefik.yml
+    #   when: traefik_enabled | default(False)
+    #   tags: traefik
+    # - include_tasks: tasks/nextcloud.yml
+    #   when: (nextcloud_enabled | default(False))
+    #   tags: nextcloud
 
 
 # These are workstations that double as servers with different handling
