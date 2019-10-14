@@ -1,3 +1,6 @@
 # [submodule "roles/my-common-packages"]
 # 	path = roles/my-common-packages
 # 	url = git@github.com:marcus-grant/role-my-common-packages
+[submodule "roles/docker-on-traefik"]
+	path = roles/docker-on-traefik
+	url = git@github.com:marcus-grant/role-traefik-on-docker
