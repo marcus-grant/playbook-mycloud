@@ -2,13 +2,13 @@
 - hosts: all
   gather_facts: true
   become: true
-  roles:
-    - role: marcus-grant.common-packages
-    - role: geerlingguy.ntp
-    - role: geerlingguy.docker
-      when: >
-        ansible_os_family == "Debian" or
-        ansible_os_family == "RedHat"
+  # roles:
+    # - role: marcus-grant.common-packages
+    # - role: geerlingguy.ntp
+    # - role: geerlingguy.docker
+    #   when: >
+    #     ansible_os_family == "Debian" or
+    #     ansible_os_family == "RedHat"
 
 # These will only be done on 'homeservers' group ie metal servers owned
 # - hosts: homeservers
@@ -41,9 +41,12 @@
   handlers:
     - import_tasks: handlers.yml
   tasks:
-    - include_tasks: tasks/ufw-traefik.yml
-    - include_tasks: tasks/docker_post_install.yml
-      when: docker_install | default(False)
+    # - include_tasks: tasks/ufw-traefik.yml
+    # - include_tasks: tasks/docker_post_install.yml
+    #   when: docker_install | default(False)
+    - include_role:
+        name: roles/docker-on-traefik  # TODO: change name
+      when: traefik_enabled | default(False)
     # - include_tasks: tasks/traefik.yml
     #   when: traefik_enabled | default(False)
     #   tags: traefik

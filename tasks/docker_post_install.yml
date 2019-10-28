@@ -13,21 +13,24 @@
 - name: install needed docker management dependencies
   apt: name={{ item }} state=latest update_cache=true
   loop:
+    - virtualenv
     - python-setuptools
     - python-pip
+    - python-docker
     - python3-setuptools
     - python3-pip
-    - virtualenv
+    - python3-docker
 
-- name: install docker python libs on pip (2)
-  pip:
-    name: docker
-    executable: pip2
+# Doesn't work well on debian, seems theres different deps in ssl-match-hostname
+# - name: install docker python libs on pip (2)
+#   pip:
+#     name: docker
+#     executable: pip2
 
-- name: install docker python libs on pip3
-  pip:
-    name: docker
-    executable: pip3
+# - name: install docker python libs on pip3
+#   pip:
+#     name: docker
+#     executable: pip3
 
 - name: 'ensure ansible user is added to docker group'
   user:
