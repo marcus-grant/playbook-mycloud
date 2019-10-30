@@ -13,13 +13,24 @@
 - name: install needed docker management dependencies
   apt: name={{ item }} state=latest update_cache=true
   loop:
+    - virtualenv
     - python-setuptools
     - python-pip
     - python-docker
     - python3-setuptools
     - python3-pip
     - python3-docker
-    - virtualenv
+
+# Doesn't work well on debian, seems theres different deps in ssl-match-hostname
+# - name: install docker python libs on pip (2)
+#   pip:
+#     name: docker
+#     executable: pip2
+
+# - name: install docker python libs on pip3
+#   pip:
+#     name: docker
+#     executable: pip3
 
 - name: 'ensure ansible user is added to docker group'
   user:
@@ -41,29 +52,3 @@
     name: docker
     state: restarted
   when: docker_config.changed
-
-# Fix bug where system-level ssl_match_hostname module installed @ sys level
-# Taken from this stack overflow http://bit.ly/2HCMwXO
-# - name: fix debian 10 docker-py dependency bug, uninstall pip2 version
-#   pip:
-#     name: docker-py
-#     state: absent
-#     executable: pip2
-# # Same for python3
-# - name: fix debian 10 docker-py dependency bug, uninstall pip3 version
-#   pip:
-#     name: docker
-#     state: absent
-#     executable: pip3
-
-
-# - name: ensure python (pip) docker-ppy module installed
-#   # become: true
-#   pip:
-#     name: docker-py
-#     executable: pip2
-# - name: ensure python 3 (pip) docker module installed
-#   # become: true
-#   pip:
-#     name: docker
-#     executable: pip3

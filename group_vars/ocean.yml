@@ -72,23 +72,34 @@ docker_compose_path: /usr/local/bin/docker-compose
 docker_group_admin_user: false
 
 
+### Traefik - Old task version
+# traefik_enabled: true
+# traefik_data_directory: '{{ docker_home }}/traefik'
+# traefik_docker_image: traefik:latest
+# traefik_debug: false
+# traefik_http_port: 10080
+# traefik_https_port: 100443
+# traefik_admin_port: 8083
+# # double quotes around each full domain with comma then newline delimits
+# traefik_certified_domains: >
+#   \"next.{{ domain_base }}\"
+
 ### Traefik
 traefik_enabled: true
 traefik_domain: '{{ vault_base_domain_ocean }}'
 traefik_admin_email: '{{ vault_admin_email }}'
 traefik_admin_encrypted_passwd: '{{ vault_traefik_admin_encrypted_passwd }}'
 traefik_dir: '{{ docker_home }}/traefik'
+<<<<<<< HEAD
 traefik_docker_image: traefik:1.7.6-alpine
+=======
+traefik_docker_image: traefik:1.7
+>>>>>>> run
 traefik_api_entrypoint: dashboard
 traefik_api_port: 8080
 traefik_docker_network: web
 traefik_debug: false
-traefik_http_port: 10080
-traefik_https_port: 100443
-traefik_admin_port: 8083
-# double quotes around each full domain with comma then newline delimits
-traefik_certified_domains: >
-  \"next.{{ domain_base }}\"
+
 
 
 ### Nextcloud
