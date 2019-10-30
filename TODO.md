@@ -4,7 +4,6 @@ To-Do's
 In-Progress
 -----------
 
-- [ ] Docker: Traefik
 - [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Nextcloud: Deploy to ocean
 - [ ] Replacement for Plex (emby?, jellyfin?)
@@ -70,6 +69,8 @@ Future
 Completed
 ---------
 
+- [x] Docker: Traefik
+- [x] UFW tasks to open up 80 & 443 (HTTP & HTTPS) ports
 - [x] Test: Make ocean grouped test vms have domain names that can be accessed
 - [x] Add prompt & args for run script for actual system that hides keys
 - [x] Encrypted inventory `production.yml`

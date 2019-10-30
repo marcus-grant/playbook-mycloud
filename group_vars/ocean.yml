@@ -74,8 +74,14 @@ docker_group_admin_user: false
 
 ### Traefik
 traefik_enabled: true
-traefik_data_directory: '{{ docker_home }}/traefik'
-traefik_docker_image: traefik:latest
+traefik_domain: '{{ vault_base_domain_ocean }}'
+traefik_admin_email: '{{ vault_admin_email }}'
+traefik_admin_encrypted_passwd: '{{ vault_traefik_admin_encrypted_passwd }}'
+traefik_dir: '{{ docker_home }}/traefik'
+traefik_docker_image: traefik:1.7.6-alpine
+traefik_api_entrypoint: dashboard
+traefik_api_port: 8080
+traefik_docker_network: web
 traefik_debug: false
 traefik_http_port: 10080
 traefik_https_port: 100443

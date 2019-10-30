@@ -39,14 +39,15 @@
   vars_files:
     - group_vars/vault.yml
   tasks:
+    - include_tasks: tasks/ufw-traefik.yml
     - include_tasks: tasks/docker_post_install.yml
       when: docker_install | default(False)
-    - include_tasks: tasks/traefik.yml
+    - include_role:
+        name: roles/docker-on-traefik  # TODO: change name
       when: traefik_enabled | default(False)
-      tags: traefik
-    - include_tasks: tasks/nextcloud.yml
-      when: (nextcloud_enabled | default(False))
-      tags: nextcloud
+    # - include_tasks: tasks/nextcloud.yml
+    #   when: (nextcloud_enabled | default(False))
+    #   tags: nextcloud
 
 
 # These are workstations that double as servers with different handling
