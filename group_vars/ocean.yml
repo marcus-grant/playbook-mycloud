@@ -90,11 +90,7 @@ traefik_domain: '{{ vault_base_domain_ocean }}'
 traefik_admin_email: '{{ vault_admin_email }}'
 traefik_admin_encrypted_passwd: '{{ vault_traefik_admin_encrypted_passwd }}'
 traefik_dir: '{{ docker_home }}/traefik'
-<<<<<<< HEAD
 traefik_docker_image: traefik:1.7.6-alpine
-=======
-traefik_docker_image: traefik:1.7
->>>>>>> run
 traefik_api_entrypoint: dashboard
 traefik_api_port: 8080
 traefik_docker_network: web
