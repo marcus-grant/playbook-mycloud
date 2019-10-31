@@ -41,24 +41,15 @@
   handlers:
     - import_tasks: handlers.yml
   tasks:
-<<<<<<< HEAD
     - include_tasks: tasks/ufw-traefik.yml
     - include_tasks: tasks/docker_post_install.yml
       when: docker_install | default(False)
     - include_role:
         name: roles/docker-on-traefik  # TODO: change name
       when: traefik_enabled | default(False)
-=======
-    # - include_tasks: tasks/ufw-traefik.yml
-    # - include_tasks: tasks/docker_post_install.yml
-    #   when: docker_install | default(False)
     - include_role:
-        name: roles/docker-on-traefik  # TODO: change name
-      when: traefik_enabled | default(False)
-    # - include_tasks: tasks/traefik.yml
-    #   when: traefik_enabled | default(False)
-    #   tags: traefik
->>>>>>> run
+        name: roles/nextcloud-on-docker  # TODO: change name
+      when: nextcloud_enabled | default(False)
     # - include_tasks: tasks/nextcloud.yml
     #   when: (nextcloud_enabled | default(False))
     #   tags: nextcloud

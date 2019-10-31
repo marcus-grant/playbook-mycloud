@@ -100,7 +100,8 @@ traefik_debug: false
 
 ### Nextcloud
 nextcloud_enabled: true
-nextcloud_host_data_directory: '/mnt/main/nc'
+nextcloud_primary_storage_type: s3
+# nextcloud_host_data_directory: '/mnt/main/nc'
 nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
 nextcloud_db_user: '{{ vault_nextcloud_db_user }}'
 nextcloud_db_user_passwd: '{{ vault_nextcloud_db_user_passwd }}'
