@@ -4,3 +4,6 @@
 [submodule "roles/docker-on-traefik"]
 	path = roles/docker-on-traefik
 	url = git@github.com:marcus-grant/role-traefik-on-docker
+[submodule "roles/nextcloud-on-docker"]
+	path = roles/nextcloud-on-docker
+	url = git@github.com:marcus-grant/role-nextcloud-on-docker.git
