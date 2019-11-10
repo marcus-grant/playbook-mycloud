@@ -1,0 +1,41 @@
+---
+- name: hello world test page docker container
+  docker_container:
+    name: hello
+    image: crccheck/hello-world
+    pull: true
+    ports:
+      - '12345:8000'
+    networks:
+      - name: '{{ traefik_docker_network | default(bridge) }}'
+    networks_cli_compatible: true
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.hello.entrypoints: 'http'
+      traefik.http.routers.hello.rule: 'Host(`hello.{{ base_domain }}`)'
+      traefik.http.middlewares.hello-https-redirect.redirectscheme.scheme:
+        'https'
+      traefik.http.routers.hello.middlewares: 'hello-https-redirect'
+      traefik.http.routers.hello-secure.entrypoints: 'https'
+      traefik.http.routers.hello-secure.rule: 'Host(`hello.{{ base_domain }}`)'
+      traefik.http.routers.hello-secure.tls: 'true'
+      traefik.http.routers.hello-secure.tls.certresolver: 'http'
+      traefik.http.routers.hello-secure.service: 'hello'
+      traefik.http.services.hello.loadbalancer.server.port: '8000'
+      traefik.docker.network: '{{ traefik_docker_network }}'
+      # TODO: Figure out how to incorporate config'd middlewares
+      # reference: https://bit.ly/2oYv1Q
+      # traefik.enable: 'true'
+      # traefik.http.routers.hello.entrypoints: 'http'
+      # traefik.http.routers.hello.rule: 'Host(`hello.{{ base_domain }}`)'
+      # traefik.http.routers.hello.middlewares: 'https-redirect@file'
+      # # traefik.http.routers.hello-secure.middlewares: secured@file
+      # traefik.http.routers.hello-secure.entrypoints: 'https'
+      # traefik.http.routers.hello-secure.rule:
+      #   'Host(`hello.{{ base_domain }}`)'
+      # traefik.http.routers.hello-secure.tls: 'true'
+      # traefik.http.routers.hello-secure.tls.certresolver: 'http'
+      # traefik.http.routers.hello-secure.service: 'hello'
+      # traefik.http.services.hello.loadbalancer.server.port: '12345'
+      # traefik.docker.network: '{{ traefik_docker_network }}'

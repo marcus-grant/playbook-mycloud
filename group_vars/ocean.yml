@@ -1,7 +1,7 @@
 ---
 ### General
 time_zone: America/New_York
-domain_base: '{{ vault_base_domain_ocean }}'
+base_domain: '{{ vault_base_domain_ocean }}'
 
 
 ### NTP
@@ -86,21 +86,20 @@ docker_group_admin_user: false
 
 ### Traefik
 traefik_enabled: true
-traefik_domain: '{{ vault_base_domain_ocean }}'
+traefik_api_url: 'tradash.{{ base_domain }}'
 traefik_admin_email: '{{ vault_admin_email }}'
 traefik_admin_encrypted_passwd: '{{ vault_traefik_admin_encrypted_passwd }}'
 traefik_dir: '{{ docker_home }}/traefik'
-traefik_docker_image: traefik:1.7.6-alpine
-traefik_api_entrypoint: dashboard
-traefik_api_port: 8080
+# traefik_docker_image: traefik:1.7.6-alpine
+traefik_docker_image: traefik:v2.0
+traefik_api_port: '8080'
 traefik_docker_network: web
-traefik_debug: false
-
+traefik_log_level: DEBUG
 
 ### Nextcloud
 nextcloud_enabled: true
 nextcloud_primary_storage_type: s3
-# nextcloud_host_data_directory: '/mnt/main/nc'
+# nextcloud_data_location: '/mnt/main/nc'
 nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
 nextcloud_db_user: '{{ vault_nextcloud_db_user }}'
 nextcloud_db_user_passwd: '{{ vault_nextcloud_db_user_passwd }}'
@@ -108,8 +107,8 @@ nextcloud_db_root_passwd: '{{ vault_nextcloud_db_root_passwd }}'
 # nextcloud_db_host: 127.0.0.1:10001
 # nextcloud_db_memory: 768M
 # nextcloud_app_memory: 768M
-nextcloud_app_port: 10000
+nextcloud_app_port: '10000'
 nextcloud_app_data_user: www-data
-nextcloud_domain: '{{ secret_nextcloud_domain }}'
-nextcloud_traefik_enabled: true
+nextcloud_domain: 'next.{{ vault_base_domain_ocean }}'
+nextcloud_traefik_enabled: 'true'
 nextcloud_trusted_domains: '{{ vault_nextcloud_trusted_domains }}'
