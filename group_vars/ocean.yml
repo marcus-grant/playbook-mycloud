@@ -104,7 +104,7 @@ nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
 nextcloud_db_user: '{{ vault_nextcloud_db_user }}'
 nextcloud_db_user_passwd: '{{ vault_nextcloud_db_user_passwd }}'
 nextcloud_db_root_passwd: '{{ vault_nextcloud_db_root_passwd }}'
-# nextcloud_db_host: 127.0.0.1:10001
+nextcloud_db_host: nextdb
 # nextcloud_db_memory: 768M
 # nextcloud_app_memory: 768M
 nextcloud_app_port: '10000'

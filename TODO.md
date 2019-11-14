@@ -7,6 +7,7 @@ In-Progress
 - [ ] Traefik: v2 with tested deployment on ocean
 - [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Nextcloud: Deploy to ocean
+- [ ] Swap configuration
 - [ ] Replacement for Plex (emby?, jellyfin?)
 - [ ] Traefik: home deployment
 
