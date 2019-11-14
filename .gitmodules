@@ -7,3 +7,6 @@
 [submodule "roles/nextcloud-on-docker"]
 	path = roles/nextcloud-on-docker
 	url = git@github.com:marcus-grant/role-nextcloud-on-docker.git
+[submodule "roles/s3fs-mount"]
+	path = roles/s3fs-mount
+	url = git@github.com:marcus-grant/s3fs-mount.git
