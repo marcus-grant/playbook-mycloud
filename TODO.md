@@ -4,6 +4,7 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] s3fs FUSE mount for primary nextcloud store
 - [ ] Traefik: v2 with tested deployment on ocean
 - [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Nextcloud: Deploy to ocean

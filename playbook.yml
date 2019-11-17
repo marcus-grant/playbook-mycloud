@@ -24,8 +24,11 @@
     # - include_role:
     #     name: roles/docker-on-traefik  # TODO: change name
     #   when: traefik_enabled | default(False)
+    # - include_role:
+    #     name: roles/nextcloud-on-docker  # TODO: change name
+    #   when: nextcloud_enabled | default(False)
     - include_role:
-        name: roles/nextcloud-on-docker  # TODO: change name
+        name: roles/s3fs-mount  # TODO: change name
       when: nextcloud_enabled | default(False)
     # - include_role: tasks/nextcloud.yml
     #   when: (nextcloud_enabled | default(False))

@@ -55,6 +55,16 @@ dotfiles:
       - {dest: '~/.tmux.conf.local', src: '~/.dots/tmux/.tmux.conf.local'}
 
 
+### S3FS
+s3fs_mounts:
+  - url: '{{ vault_spaces.mycloud_next.url }}'
+    bucket: '{{ vault_spaces.mycloud_next.bucket }}'
+    mount: /mnt/s3nc
+    cache: /tmp/s3nc
+    keyid: '{{ vault_spaces.mycloud_next.keyid }}'
+    key: '{{ vault_spaces.mycloud_next.key }}'
+
+
 ### Docker
 docker_install: true
 docker_edition: ce
