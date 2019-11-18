@@ -5,8 +5,6 @@ In-Progress
 -----------
 
 - [ ] s3fs FUSE mount for primary nextcloud store
-- [ ] Traefik: v2 with tested deployment on ocean
-- [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Nextcloud: Deploy to ocean
 - [ ] Swap configuration
 - [ ] Replacement for Plex (emby?, jellyfin?)
@@ -21,6 +19,7 @@ Planning
 -   - [ ] External streaming service aggregation
 -   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
+- [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Add yourself or some other user as part of the docker group
 - [ ] Test: Make selectable vagrant definition for ocean group machine
 - [ ] Refactor the `become`'s in playbook and associated tasks
@@ -72,10 +71,8 @@ Future
 Completed
 ---------
 
-<<<<<<< HEAD
+- [x] Traefik: v2 with tested deployment on ocean
 - [x] Docker: Traefik
-=======
->>>>>>> run
 - [x] UFW tasks to open up 80 & 443 (HTTP & HTTPS) ports
 - [x] Test: Make ocean grouped test vms have domain names that can be accessed
 - [x] Add prompt & args for run script for actual system that hides keys

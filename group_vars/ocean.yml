@@ -63,6 +63,7 @@ s3fs_mounts:
     cache: /tmp/s3nc
     keyid: '{{ vault_spaces.mycloud_next.keyid }}'
     key: '{{ vault_spaces.mycloud_next.key }}'
+    owner: www-data
 
 
 ### Docker
@@ -108,8 +109,8 @@ traefik_log_level: DEBUG
 
 ### Nextcloud
 nextcloud_enabled: true
-nextcloud_primary_storage_type: s3
-# nextcloud_data_location: '/mnt/main/nc'
+nextcloud_primary_storage_type: local
+nextcloud_data_location: '/mnt/s3nc'
 nextcloud_docker_directory: '{{ docker_home }}/nextcloud'
 nextcloud_db_user: '{{ vault_nextcloud_db_user }}'
 nextcloud_db_user_passwd: '{{ vault_nextcloud_db_user_passwd }}'
