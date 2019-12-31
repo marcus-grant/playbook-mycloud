@@ -4,6 +4,8 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Create run script for frigg
+- [ ] Add libvirt/kvm packages to be installed on frigg
 - [ ] Nextcloud: Deploy to frigg
 - [ ] Swap space configuration for cloud hosts
 - [ ] Replacement for Plex (emby?, jellyfin?)
@@ -19,6 +21,7 @@ Planning
 -   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Nextcloud: Configure for S3 primary storage
+- [ ] Refactor: homeservers to nyc, wpb, etc?
 - [ ] s3fs FUSE mount for primary nextcloud store
 - [ ] Add yourself or some other user as part of the docker group
 - [ ] Test: Make selectable vagrant definition for ocean group machine

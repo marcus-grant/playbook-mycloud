@@ -40,37 +40,21 @@
         name: marcus-grant.mydotfiles
 
 
-# - hosts: ocean
-#   gather_facts: true
-#   become: true
-#   vars_files:
-#     - group_vars/vault.yml
-#   handlers:
-#     - import_tasks: handlers.yml
-#   tasks:
-#     # - include_tasks: tasks/ufw-traefik.yml
-#     # - include_tasks: tasks/docker_post_install.yml
-#     #   when: docker_install | default(False)
-#     # - include_role:
-#     #     name: roles/docker-on-traefik
-#     #   when: traefik_enabled | default(False)
-#     - include_role: name=roles/s3fs-mount
-#       when: s3fs_mounts is defined and (s3fs_mounts | length > 0)
-#     - include_role: name=roles/nextcloud-on-docker
-#       when: nextcloud_enabled | default(False)
-
-# - hosts: frigg
-#   gather_facts: true
-#   become: true
-#   roles:
-#     - role: roles/qemu
-
-
-# These are workstations that double as servers with different handling
-# - hosts: workstations
-#   gather_facts: true
-#   tasks:
-#     - name: docker is instaled using pacman
-#       pacman:
-#         name: docker
-#         state: present
+- hosts: ocean
+  gather_facts: true
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  handlers:
+    - import_tasks: handlers.yml
+  tasks:
+# - include_tasks: tasks/ufw-traefik.yml
+# - include_tasks: tasks/docker_post_install.yml
+#   when: docker_install | default(False)
+# - include_role:
+#     name: roles/docker-on-traefik
+#   when: traefik_enabled | default(False)
+# - include_role: name=roles/s3fs-mount
+#   when: s3fs_mounts is defined and (s3fs_mounts | length > 0)
+# - include_role: name=roles/nextcloud-on-docker
+#   when: nextcloud_enabled | default(False)
