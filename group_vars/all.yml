@@ -1,6 +1,7 @@
 ---
 # General variables
 time_zone: America/New_York
+admin_user: '{{ vault_admin_user }}'
 
 # dotfiles role variables
 dotfiles_local_root_dir: '~/.dots'
