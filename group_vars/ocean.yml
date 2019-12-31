@@ -56,14 +56,14 @@ dotfiles:
 
 
 ### S3FS
-s3fs_mounts:
-  - url: '{{ vault_spaces.mycloud_next.url }}'
-    bucket: '{{ vault_spaces.mycloud_next.bucket }}'
-    mount: /mnt/s3nc
-    cache: /tmp/s3nc
-    keyid: '{{ vault_spaces.mycloud_next.keyid }}'
-    key: '{{ vault_spaces.mycloud_next.key }}'
-    owner: www-data
+# s3fs_mounts:
+#   - url: '{{ vault_spaces.mycloud_next.url }}'
+#     bucket: '{{ vault_spaces.mycloud_next.bucket }}'
+#     mount: /mnt/s3nc
+#     cache: /tmp/s3nc
+#     keyid: '{{ vault_spaces.mycloud_next.keyid }}'
+#     key: '{{ vault_spaces.mycloud_next.key }}'
+#     owner: www-data
 
 
 ### Docker

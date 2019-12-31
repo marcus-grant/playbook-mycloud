@@ -25,7 +25,7 @@
     #     name: roles/docker-on-traefik
     #   when: traefik_enabled | default(False)
     - include_role: name=roles/s3fs-mount
-      when: nextcloud_enabled | default(False)
+      when: s3fs_mounts is defined and (s3fs_mounts | length > 0)
     - include_role: name=roles/nextcloud-on-docker
       when: nextcloud_enabled | default(False)
 
