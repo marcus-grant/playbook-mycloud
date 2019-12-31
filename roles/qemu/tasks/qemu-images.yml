@@ -1,0 +1,5 @@
+---
+- name: ensure default QEMU images directory exists
+  file:
+    name: '{{ qemu_images_location }}'
+    state: directory

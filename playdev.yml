@@ -1,0 +1,11 @@
+---
+- hosts: homeservers
+  gather_facts: true
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  handlers:
+    - import_tasks: handlers.yml
+  tasks:
+    - include_role: name=roles/qemu
+      when: qemu_install

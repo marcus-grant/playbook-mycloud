@@ -1,0 +1,4 @@
+---
+qemu_install: false
+qemu_gui_enable: false
+qemu_images_location: /mnt/images

@@ -1,3 +1,8 @@
+---
+### QEMU
+qemu_install: true
+qemu_gui_enable: true
+qemu_images_location: /mnt/images
 
 # TODO: Test whether this is even necessary
 # dotfiles root directory, where all seperate dotfiles subdirectories go
