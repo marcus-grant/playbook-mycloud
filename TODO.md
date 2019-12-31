@@ -7,6 +7,7 @@ In-Progress
 - [ ] Create run script for frigg
 - [ ] Add libvirt/kvm packages to be installed on frigg
 - [ ] Nextcloud: Deploy to frigg
+- [ ] Refactor: make plays for the major groups incl. all & tie together in `playbook`
 - [ ] Swap space configuration for cloud hosts
 - [ ] Replacement for Plex (emby?, jellyfin?)
 - [ ] Traefik: home deployment

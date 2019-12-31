@@ -1,0 +1,11 @@
+---
+- name: ensure libvirt/qemu dependencies are installed
+  become: true
+  apt:
+    name: '{{ item }}'
+    state: present
+    install_recommends: '{{ qemu_gui_enable }}'
+  loop:
+    - qemu-kvm
+    - libvirt-clients
+    - libvirt-daemon-system

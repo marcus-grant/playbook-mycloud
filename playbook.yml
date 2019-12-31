@@ -18,9 +18,11 @@
   handlers:
     - import_tasks: handlers.yml
   tasks:
+    - include_tasks: tasks/docker_post_install.yml
     - include_role:
         name: marcus-grant.mydotfiles
-    - include_tasks: tasks/docker_post_install.yml
+    - include_role: name=roles/qemu
+      when: qemu_install
 #   when: docker_install | default(False)
 # - include_role:
 #     name: roles/docker-on-traefik

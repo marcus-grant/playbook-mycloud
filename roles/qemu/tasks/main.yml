@@ -1,0 +1,6 @@
+---
+- include_tasks: ./qemu-install-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- include_tasks: ./qemu-images.yml
+  when: qemu_images_location is defined
