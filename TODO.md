@@ -4,9 +4,8 @@ To-Do's
 In-Progress
 -----------
 
-- [ ] s3fs FUSE mount for primary nextcloud store
-- [ ] Nextcloud: Deploy to ocean
-- [ ] Swap configuration
+- [ ] Nextcloud: Deploy to frigg
+- [ ] Swap space configuration for cloud hosts
 - [ ] Replacement for Plex (emby?, jellyfin?)
 - [ ] Traefik: home deployment
 
@@ -20,6 +19,7 @@ Planning
 -   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Nextcloud: Configure for S3 primary storage
+- [ ] s3fs FUSE mount for primary nextcloud store
 - [ ] Add yourself or some other user as part of the docker group
 - [ ] Test: Make selectable vagrant definition for ocean group machine
 - [ ] Refactor the `become`'s in playbook and associated tasks
@@ -30,6 +30,7 @@ Planning
 - [ ] TICK stack on nyc for testing out use cases
 - [ ] Start splitting docker containers by inventory groups
     - Nextcloud & Gitea should be on freyr
+- [ ] Zswap role
 
 Future
 ------
