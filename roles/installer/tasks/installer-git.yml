@@ -1,0 +1,3 @@
+---
+# clone package using git to a set location /opt/name
+# then link the key binaries to /usr/local/bin

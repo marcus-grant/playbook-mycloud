@@ -1,0 +1,5 @@
+---
+- name: 'ensure {{ name }} is installed using yum'
+  yum:
+    name: '{{ name }}'
+    state: present

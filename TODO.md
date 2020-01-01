@@ -4,12 +4,16 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Refactor: split out `playbook` into plays
+    - `all`, `frigg`, `thor`, `snori`
 - [ ] Create run script for frigg
 - [ ] Add libvirt/kvm packages to be installed on frigg
 - [ ] Nextcloud: Deploy to frigg
 - [ ] Refactor: make plays for the major groups incl. all & tie together in `playbook`
 - [ ] Swap space configuration for cloud hosts
 - [ ] Replacement for Plex (emby?, jellyfin?)
+- [ ] Add git clone installer task content
+    - make sure to add task var for binary paths from cloned repo
 - [ ] Traefik: home deployment
 
 Planning
@@ -21,7 +25,8 @@ Planning
 -   - [ ] External streaming service aggregation
 -   - [ ] Podcasts
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
-- [ ] Nextcloud: Configure for S3 primary storage
+- [ ] Refactor: add play groups like `ocean` `nyc-kube`, etc.
+- - [ ] Nextcloud: Configure for S3 primary storage
 - [ ] Refactor: homeservers to nyc, wpb, etc?
 - [ ] s3fs FUSE mount for primary nextcloud store
 - [ ] Add yourself or some other user as part of the docker group

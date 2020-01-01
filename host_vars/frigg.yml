@@ -1,8 +1,31 @@
 ---
+### General
+admin_user: '{{ vault_admin_user }}'
+
 ### QEMU
 qemu_install: true
 qemu_gui_enable: true
 qemu_images_location: /mnt/images
+
+### Package Installs
+installer_packages:
+  - {method: yum, name: openssh-server}
+  - {method: yum, name: openssl}
+  - {method: yum, name: wget}
+  - {method: yum, name: curl}
+  - {method: yum, name: unzip}
+  - {method: yum, name: git}
+  - {method: yum, name: vim}
+  - {method: yum, name: tmux}
+  - {method: yum, name: fzf}
+  - {method: yum, name: fd-find}
+  - {method: yum, name: ripgrep}
+  - {method: yum, name: tree}
+  - {method: yum, name: ranger}
+  - {method: yum, name: ncdu}
+  - {method: yum, name: htop}
+  - {method: yum, name: iotop}
+  - {method: yum, name: tldr}
 
 # TODO: Test whether this is even necessary
 # dotfiles root directory, where all seperate dotfiles subdirectories go

@@ -1,0 +1,21 @@
+---
+installer_packages:
+  - openssh
+  - openssl
+  - keychain
+  - wget
+  - curl
+  - unzip
+  - git
+  - tig
+  - vim
+  - tmux
+  - fzf
+  - fd
+  - ripgrep
+  - tree
+  - ranger
+  - ncdu
+  - htop
+  - iotop
+  - tldr

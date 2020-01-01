@@ -1,0 +1,17 @@
+---
+- debug:
+    msg: >
+      installer packages:
+      {{ item.method }}
+      {{ item.name }}
+  loop: '{{ installer_packages }}'
+
+- name: 'handle install of {{ item.name }}'
+  include_tasks: './installer-{{ item.method }}.yml'
+  vars: {name: '{{ item.name }}', method: '{{ item.method }}'}
+  loop: '{{ installer_packages }}'
+  when:
+    - installer_packages is defined
+    - installer_packages | length > 0
+    - item.name is defined
+    - item.method is defined
