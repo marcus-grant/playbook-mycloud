@@ -12,8 +12,8 @@
       when: >
         ansible_os_family == "Debian" or
         ansible_os_family == "RedHat"
-  # post_tasks:
-  #   - import_tasks: tasks/docker_post_install.yml
+  post_tasks:
+    - import_tasks: tasks/docker_post_install.yml
 
 # Do these things only as the ssh user
 - hosts: frigg

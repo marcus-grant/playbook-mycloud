@@ -24,7 +24,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: install needed docker management dependencies
-  apt: name={{ item }} state=latest update_cache=true
+  yum: name={{ item }} state=latest update_cache=true
   loop:
     - virtualenv
     - python-setuptools
