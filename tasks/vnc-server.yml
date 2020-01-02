@@ -1,0 +1,6 @@
+---
+# - name: ensure tightvnc installed for Debian-based system
+#   apt:
+#     name: tightvnc
+#     state: present
+#   when:
