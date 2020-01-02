@@ -5,4 +5,4 @@ cd "$run_path"
 ansible-playbook \
     -l frigg \
     -i ../../production.yml \
-    ../../playbook.yml
+    ../../frigg.yml

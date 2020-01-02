@@ -1,0 +1,26 @@
+---
+- hosts: frigg
+  gather_facts: true
+  become: true
+  roles:
+    - role: ./roles/installer
+    - role: geerlingguy.ntp
+    - role: geerlingguy.docker
+    #   - role: name=roles/qemu
+    #     when: qemu_install
+    - role: marcus-grant.mydotfiles
+      when: >
+        ansible_os_family == "Debian" or
+        ansible_os_family == "RedHat"
+  # post_tasks:
+  #   - import_tasks: tasks/docker_post_install.yml
+
+# Do these things only as the ssh user
+- hosts: frigg
+  gather_facts: true
+  vars_files:
+    - group_vars/vault.yml
+  handlers:
+    - import_tasks: handlers.yml
+  roles:
+    - role: marcus-grant.mydotfiles

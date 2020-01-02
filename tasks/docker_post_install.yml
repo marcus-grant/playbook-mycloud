@@ -13,6 +13,19 @@
 - name: install needed docker management dependencies
   apt: name={{ item }} state=latest update_cache=true
   loop:
+    - python-virtualenv
+    - python-setuptools
+    - python-pip
+    - python-docker
+    - python3-virtualenv
+    - python3-setuptools
+    - python3-pip
+    - python3-docker
+  when: ansible_os_family == 'Debian'
+
+- name: install needed docker management dependencies
+  apt: name={{ item }} state=latest update_cache=true
+  loop:
     - virtualenv
     - python-setuptools
     - python-pip
@@ -20,6 +33,7 @@
     - python3-setuptools
     - python3-pip
     - python3-docker
+  when: ansible_os_family == 'RedHat'
 
 # Doesn't work well on debian, seems theres different deps in ssl-match-hostname
 # - name: install docker python libs on pip (2)

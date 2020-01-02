@@ -1,16 +1,8 @@
 ---
-- hosts: all
-  gather_facts: true
-  become: true
-  roles:
-    # - role: marcus-grant.common-packages
-    - role: ./roles/installer
-    - role: geerlingguy.ntp
-    - role: geerlingguy.docker
-    - role: marcus-grant.mydotfiles
-      when: >
-        ansible_os_family == "Debian" or
-        ansible_os_family == "RedHat"
+- import_playbook: all.yml
+- import_playbook: frigg.yml
+- import_playbook: thor.yml
+- import_playbook: snori.yml
 
 - hosts: homeservers
   gather_facts: true

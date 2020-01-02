@@ -1,0 +1,5 @@
+---
+- import_playbook: all.yml
+- import_playbook: frigg.yml
+- import_playbook: thor.yml
+- import_playbook: snori.yml

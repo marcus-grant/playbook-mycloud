@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: true
+  become: true
+  roles:
+    - role: ./roles/installer
+    - role: geerlingguy.ntp
+    - role: geerlingguy.docker
+    - role: marcus-grant.mydotfiles
+      when: >
+        ansible_os_family == "Debian" or
+        ansible_os_family == "RedHat"
+
+# Do these things only as the ssh user
+- hosts: all
+  gather_facts: true
+  roles:
+    - role: marcus-grant.mydotfiles
