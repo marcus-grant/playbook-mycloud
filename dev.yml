@@ -6,8 +6,7 @@
     - group_vars/vault.yml
   handlers:
     - import_tasks: handlers.yml
-  # pre_tasks:
-  # - include_role: name=roles/qemu
-  #   when: qemu_install
-  roles:
-    - role: installer
+  pre_tasks:
+    # - import_tasks: tasks/firewalld.yml
+    - import_tasks: tasks/unifi-firewall.yml
+    # - import_tasks: tasks/unifi.yml

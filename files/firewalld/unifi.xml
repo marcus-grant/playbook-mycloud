@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>unifi</short>
+  <description>UniFi Ports for autodiscover, service and mgmt</description>
+  <port protocol="udp" port="3478"/><!-- STUN -->
+  <port protocol="tcp" port="8080"/><!-- Device/Contrlr Comms -->
+  <port protocol="tcp" port="8443"/><!-- Web GUI/API -->
+  <port protocol="tcp" port="8880"/><!-- HTTP Portal Redirect -->
+  <port protocol="tcp" port="8843"/><!-- HTTPS Portal Redirect -->
+  <port protocol="tcp" port="6789"/><!-- Speed Test Service -->
+  <port protocol="tcp" port="27117"/><!-- Local-bound DB Comms -->
+  <port protocol="udp" port="5656-5699"/><!-- AP-EDU broadcast -->
+  <port protocol="udp" port="10001"/><!-- AP-EDU broadcast -->
+  <port protocol="udp" port="1900"/><!-- L2 Discovery -->
+</service>

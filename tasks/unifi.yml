@@ -1,29 +1,94 @@
 ---
-- name: create unifi docker data directory
-  file:
-    path: '{{ unifi_docker_directory }}'
-    state: directory
-    owner: root
-    group: docker
-    mode: 0770
+- name: Configure UniFi container using Docker (default)
+  block:
+  - name: create unifi docker data directory
+    file:
+      path: '{{ unifi_docker_directory }}'
+      state: directory
+      owner: root
+      group: docker
+      mode: 0770
 
-- name: unifi controller docker container
-  docker_container:
-    name: unifi
-    image: linuxserver/unifi
-    pull: yes
-    restart_policy: unless-stopped
-    volumes:
-      - '{{ unifi_docker_directory }}:/config'
-    env:
-      PGID: '997'
-      PUID: '1000'
-    ports:
-      - '3478:3478/udp'
-      - '10001:10001/udp'
-      - '8080:8080'
-      - '8081:8081'
-      - '8443:8443'
-      - '8843:8843'
-      - '8880:8880'
-      - '6789:6789'
+  - name: unifi controller docker container
+    docker_container:
+      name: unifi
+      image: linuxserver/unifi
+      pull: true
+      restart_policy: unless-stopped
+      volumes:
+        - '{{ unifi_docker_directory }}:/config'
+      env:
+        PGID: '997'
+        PUID: '1000'
+      ports:
+        - '3478:3478/udp'
+        - '10001:10001/udp'
+        - '8080:8080'
+        - '8081:8081'
+        - '8443:8443'
+        - '8843:8843'
+        - '8880:8880'
+        - '6789:6789'
+  when: container_default_engine == 'docker' | default(True)
+
+- name: Configure UniFi container using Podman
+  block:
+    - name: ensure unifi group
+      group:
+        name: unifi
+        gid: '{{ unifi_gid }}'
+        state: present
+
+    - name: ensure unifi user
+      user:
+        name: unifi
+        comment: User to run unifi control app
+        uid: '{{ unifi_uid }}'
+        group: unifi
+        shell: /sbin/nologin
+
+    - name: ensure unifi config dir
+      tags: unifi
+      file:
+        path: '{{ unifi_pod_dir }}'
+        state: directory
+        owner: '{{ unifi_uid }}'
+        group: '{{ unifi_gid }}'
+        recurse: false
+
+    - name: check if unifi service file exists
+      stat:
+        path: '{{ unifi_pod_service_file }}'
+      register: service_file_before_template
+
+    - name: pull unifi container
+      podman_image:
+        name: '{{ item }}'
+      loop:
+        - '{{ unifi_pod_image }}'
+
+    - name: if no service file for unifi template a new one
+      vars:
+        container_name: unifi
+        container_user: unifi
+        container_image: '{{ unifi_pod_image }}'
+        container_run_args: >-
+          --rm
+          -p 8080:8080 -p 8443:8443 -p 3478:3478/udp -p 10001:10001/udp
+          -v {{ unifi_pod_dir }}:/unifi:Z
+          --memory=2048M
+          -e TZ={{ timezone }}
+          -e UNIFI_UID={{ unifi_uid }}
+          -e UNIFI_GID={{ unifi_gid }}
+      # if you want hostname included use this:
+      # --hostname="unifi.{{ vault_base_domain }}"
+      template:
+        src: containers/systemd-service-pod.j2
+        dest: '{{ unifi_pod_service_file }}'
+        owner: root
+        group: wheel
+        mode: 775
+
+  when:
+    - container_default_engine is defined
+    - container_default_engine == 'podman'

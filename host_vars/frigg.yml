@@ -58,6 +58,7 @@ docker_group_admin_user: false  # disable docker group access for admin
 ###
 
 ### Pods General Settings
+container_default_engine: docker
 pods_base_dir: /mnt/pods
 pods_volumes_dir: '{{ pods_base_dir }}/volumes'
 pods_services_dir: '{{ pods_base_dir }}/services'

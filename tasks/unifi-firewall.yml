@@ -1,0 +1,29 @@
+---
+- name: copy unifi service rules for firewalld
+  copy:
+    src: firewalld/unifi.xml
+    dest: /usr/lib/firewalld/services/unifi.xml
+    owner: root
+    group: root
+    mode: '700'
+  register: copy_fw_rule_unifi
+
+- name: reload firewall service if unifi rule added
+  systemd:
+    name: firewalld
+    state: restarted
+  when: copy_fw_rule_unifi.changed
+
+- name: enable unifi custom service rules
+  firewalld:
+    service: unifi
+    state: enabled
+    zone: '{{ firewalld_default_zone }}'
+    permanent: true
+  register: fw_unifi_rule_set
+
+- name: reload firewall service if unifi rule added
+  systemd:
+    name: firewalld
+    state: restarted
+  when: fw_unifi_rule_set.changed
