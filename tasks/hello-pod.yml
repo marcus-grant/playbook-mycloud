@@ -1,0 +1,10 @@
+---
+# - debug:
+#     msg: hello world
+- name: set container state based on enable variable
+  set_fact: cron_state=present
+  when: hello_pod_enable == "running"
+
+- name: set variable states when container state not running
+  set_fact: cron_state=absent
+  when: hello_pod_enable != "running"

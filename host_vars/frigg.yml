@@ -1,6 +1,8 @@
 ---
 ### General
 admin_user: '{{ vault_admin_user }}'
+admin_group: wheel
+timezone: America/New_York
 
 ### Network/Firewall
 firewalld_default_zone: internal
@@ -9,6 +11,11 @@ network_default_interface: eno1
 ### Remote (ie cockpit)
 cockpit_enable: true
 
+
+### Services
+services_base_dir: /mnt/services
+services_timeout_start_sec: 30
+services_restart_sec: 30
 
 ### QEMU
 qemu_install: true
@@ -45,6 +52,25 @@ docker_group_admin_user: false  # disable docker group access for admin
 
 ### UniFi
 
+
+###
+### Pod Settings
+###
+
+### Pods General Settings
+pods_base_dir: /mnt/pods
+pods_volumes_dir: '{{ pods_base_dir }}/volumes'
+pods_services_dir: '{{ pods_base_dir }}/services'
+
+### HelloPod
+hello_pod_enable: true
+
+### UniFi
+unifi_gid: 10010
+unifi_uid: 10010
+unifi_pod_dir: '{{ pods_volumes_dir }}/unifi'
+unifi_pod_service_file: '{{ pods_services_dir }}/unifi.service'
+unifi_pod_image: jacobalberty/unifi:latest
 
 # TODO: Test whether this is even necessary
 # dotfiles root directory, where all seperate dotfiles subdirectories go

@@ -1,0 +1,33 @@
+---
+- name: ensure podman installed
+  yum: '{{ item }}'
+  loop:
+    - podman
+
+- name: ensure default base podman directory exists
+  file:
+    path: '{{ pods_base_dir }}'
+    state: directory
+    owner: root
+    mode: '750'
+    group: '{{ admin_group }}'
+
+- name: ensure default podman volumes directory exists
+  file:
+    path: '{{ pods_volumes_dir }}'
+    state: directory
+    owner: root
+    group: '{{ admin_group }}'
+    mode: '750'
+
+- name: ensure services default directory exists
+  file:
+    path: '{{ pods_services_dir }}'
+    state: directory
+    owner: root
+    group: '{{ admin_group }}'
+    mode: '750'
+
+- name: check that podman works
+  changed_when: false
+  command: podman ps
