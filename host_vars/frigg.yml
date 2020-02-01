@@ -2,10 +2,18 @@
 ### General
 admin_user: '{{ vault_admin_user }}'
 
+### Network/Firewall
+firewalld_default_zone: internal
+network_default_interface: eno1
+
+### Remote (ie cockpit)
+cockpit_enable: true
+
+
 ### QEMU
 qemu_install: true
 qemu_gui_enable: true
-qemu_images_location: /mnt/images
+qemu_images_location: /mnt/vm
 
 ### Package Installs
 installer_packages:
@@ -26,6 +34,17 @@ installer_packages:
   - {method: yum, name: htop}
   - {method: yum, name: iotop}
   - {method: yum, name: tldr}
+
+###
+### Docker Settings & Container Settings
+###
+
+### General Settings
+# Use this to enable or disable admin user access, forcing sudo & root
+docker_group_admin_user: false  # disable docker group access for admin
+
+### UniFi
+
 
 # TODO: Test whether this is even necessary
 # dotfiles root directory, where all seperate dotfiles subdirectories go

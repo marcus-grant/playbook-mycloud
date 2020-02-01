@@ -7,4 +7,10 @@
   version: master
 - name: geerlingguy.ntp
 - name: geerlingguy.docker
+# - name: container_image_cleanup
+#   src: ikke_t.container_image_cleanup
+#   version: master
+# - name: podman_container_systemd
+#   src: ikke_t.podman_container_systemd
+#   version: master
 # - name: geerlingguy.pip

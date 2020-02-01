@@ -1,0 +1,46 @@
+---
+- name: check if default zone exists
+  command: firewall-cmd --get-zones
+  changed_when: false
+  register: firecmd_zones_cmd
+
+- name: enable cockpit rule on firewalld
+  firewalld:
+    zone: '{{ firewalld_default_zone }}'
+    service: cockpit
+    state: enabled
+    permanent: true
+  register: fw_rules_change_cockpit
+  when:
+    - cockpit_enable | default(False)
+    - firewalld_default_zone in firecmd_zones_cmd
+
+- name: enable ssh port (probably should already be enabled)
+  firewalld:
+    zone: '{{ firewalld_default_zone }}'
+    port: '{{ ansible_port }}/tcp'
+    permanent: true
+    state: enabled
+  register: fw_rules_change_ssh
+  when:
+    - firewalld_default_zone in firecmd_zones_cmd
+
+- name: 'check if current default zone is set to "{{ firewalld_default_zone }}"'
+  command: firewall-cmd --list-all
+  changed_when: false
+  register: firecmd_list_all
+
+- name: set default firewalld zone
+  command: firewall-cmd --set-default-zone={{ firewalld_default_zone }}
+  register: firecmd_set_zone
+  failed_when: firecmd_set_zone.rc != 0
+  when: firewalld_default_zone not in firecmd_list_all.stdout
+
+# NOTE !!!! This must be done last
+- name: restart firewall
+  systemd:
+    daemon-reload: true
+  when:
+    firewalld_default_zone not in firecmd_list_all.stdout or
+    fw_rules_change_ssh.changed or
+    fw_rules_change_cockpit.changed

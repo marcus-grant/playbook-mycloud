@@ -2,10 +2,11 @@
 - hosts: frigg
   gather_facts: true
   become: true
+  pre_tasks:
+    - import_tasks: tasks/firewalld.yml
   roles:
     - role: ./roles/installer
     - role: geerlingguy.ntp
-    - role: geerlingguy.docker
     #   - role: name=roles/qemu
     #     when: qemu_install
     - role: marcus-grant.mydotfiles

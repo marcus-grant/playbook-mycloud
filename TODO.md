@@ -4,9 +4,15 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] DynDNS daemon
+- [ ] Let's encrypt egress (pod or bare?)
+- [ ] Nginx reverse proxy pod
+- [ ] Postgres Database on bare metal
+- [ ] Nextcloud: Deploy to frigg
+- [ ] Encrypted FUSE mounts (things like gitea data)
+- [ ] Get rest of basic frigg plays to run
 - [ ] Add libvirt/kvm packages to be installed on frigg
 - [ ] NFS role (look for premade stuff) (both client & server)
-- [ ] Nextcloud: Deploy to frigg
 - [ ] Replacement for Plex (emby?, jellyfin?)
 - [ ] Add git clone installer task content
     - make sure to add task var for binary paths from cloned repo
@@ -43,6 +49,7 @@ Planning
 - [ ] Funkwhale or one of the air/sub sonics for music serving
 - [ ] Checkout [Lemmy](http://bit.ly/36gYpgf)
 - [ ] Checkout [PyShelf](http://bit.ly/2MM8r1e)
+- [ ] Add firewalld_default_zone to firewalld if not present in `tasks/firewalld.yml`
 - [ ] Add yourself or some other user as part of the docker group
 - [ ] Test: Make selectable vagrant definition for ocean group machine
 - [ ] Jenkins on thor
@@ -95,6 +102,8 @@ Future
 Completed
 ---------
 
+- [x] Install UniFi container on frigg
+- [?] Get podman running on frigg works in basic cases but rootless permissions issues (abandoning for now after settings fedora to cgroupsv1)
 - [x] Refactor: split out `playbook` into plays
 - [x] Create run script for frigg
 - [x] Traefik: v2 with tested deployment on ocean
