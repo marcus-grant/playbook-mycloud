@@ -7,6 +7,4 @@
   handlers:
     - import_tasks: handlers.yml
   pre_tasks:
-    # - import_tasks: tasks/firewalld.yml
-    - import_tasks: tasks/unifi-firewall.yml
-    # - import_tasks: tasks/unifi.yml
+    - import_tasks: tasks/unifi.yml

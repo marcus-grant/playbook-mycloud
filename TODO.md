@@ -4,10 +4,10 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Docker: Gitea
+- [ ] Nginx reverse proxy pod
 - [ ] DynDNS daemon
 - [ ] Let's encrypt egress (pod or bare?)
-- [ ] Nginx reverse proxy pod
-- [ ] Postgres Database on bare metal
 - [ ] Nextcloud: Deploy to frigg
 - [ ] Encrypted FUSE mounts (things like gitea data)
 - [ ] Get rest of basic frigg plays to run
@@ -18,7 +18,6 @@ In-Progress
     - make sure to add task var for binary paths from cloned repo
 - [ ] Traefik: home deployment
     - http://bit.ly/2QGpliG might help
-- [ ] Docker: Gitea
 - [ ] Kubespray
 - [ ] Best combination of services for:
   - [ ] Personal music streaming
@@ -39,6 +38,7 @@ Planning
 - [ ] Make sure aptitude gets installed on all debian servers before any other task
 - [ ] Swap space configuration for cloud hosts
 - [ ] [Ciao](http://bit.ly/37v7Cl4) web endpoint monitor/alerts
+- [ ] Postgres Database on bare metal
 - [ ] SSH Logins Alerts on Telegram
     - Also consider pushbullet or twilio api
 - [ ] Refactor: add play groups like `ocean` `nyc-kube`, etc.

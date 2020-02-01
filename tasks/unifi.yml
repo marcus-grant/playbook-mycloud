@@ -1,12 +1,26 @@
 ---
 - name: Configure UniFi container using Docker (default)
   block:
+  - name: ensure unifi group
+    group:
+      name: unifi
+      gid: '{{ unifi_gid }}'
+      state: present
+
+  - name: ensure unifi user
+    user:
+      name: unifi
+      comment: User to run unifi control app
+      uid: '{{ unifi_uid }}'
+      group: unifi
+      shell: /sbin/nologin
+
   - name: create unifi docker data directory
     file:
       path: '{{ unifi_docker_directory }}'
       state: directory
-      owner: root
-      group: docker
+      owner: unifi
+      group: unifi
       mode: 0770
 
   - name: unifi controller docker container
@@ -18,8 +32,8 @@
       volumes:
         - '{{ unifi_docker_directory }}:/config'
       env:
-        PGID: '997'
-        PUID: '1000'
+        PGID: '{{ unifi_gid | quote }}'
+        PUID: '{{ unifi_uid | quote }}'
       ports:
         - '3478:3478/udp'
         - '10001:10001/udp'

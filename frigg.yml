@@ -15,6 +15,8 @@
         ansible_os_family == "RedHat"
   post_tasks:
     - import_tasks: tasks/docker_post_install.yml
+    - import_tasks: tasks/unifi-firewall.yml
+    - import_tasks: tasks/unifi.yml
 
 # Do these things only as the ssh user
 - hosts: frigg
