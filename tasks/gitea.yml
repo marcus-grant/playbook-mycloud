@@ -1,0 +1,105 @@
+---
+- name: ensure git group
+  group:
+    name: git
+    gid: '{{ gitea_gid }}'
+    state: present
+
+- name: ensure git user
+  user:
+    name: git
+    uid: '{{ gitea_uid }}'
+    state: present
+    system: true
+    create_home: false
+    group: git
+
+- name: ensure gitea directories exist
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: git
+    group: git
+    recurse: true
+  loop:
+    - '{{ gitea_dir }}'
+    - '{{ gitea_app_data_dir }}'
+    - '{{ gitea_db_data_dir }}'
+
+# These are only setup when app & db containers are on seperate hosts
+- name: setup gitea db container seperately
+  docker_container:
+    name: gitea-db
+    image: postgres:9.6
+    restart_policy: unless-stopped
+    env:
+      POSTGRES_USER: gitea
+      POSTGRES_PASSWORD: '{{ gitea_db_passwd }}'
+      POSTGRES_DB: gitea
+    volumes:
+      - '{{ gitea_db_data_dir }}:/var/lib/postgresql/data'
+  when: gitea_seperate_net_location and gitea_setup_db_here
+
+- name: setup gitea app container seperately
+  docker_container:
+    name: gitea
+    image: gitea/gitea:latest
+    env:
+      USER_UID: '{{ unifi_uid }}'
+      USER_GID: '{{ unifi_gid }}'
+      DB_TYPE: postgres
+      DB_HOST: '{{ gitea_db_host }}'
+      DB_NAME: gitea
+      DB_USER: gitea
+      DB_PASSWD: '{{ gitea_db_passwd }}'
+    restart_policy: unless-stopped
+    volumes:
+      - '{{ gitea_app_data_dir }}:/data'
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+    ports:
+      - '{{ gitea_app_port }}:3000'
+      - '{{ gitea_ssh_port }}:22'
+  when: gitea_seperate_net_location and gitea_setup_app_here
+
+# These are only run when setting up app & db on same host
+- name: create gitea network
+  docker_network:
+    name: gitea
+  when: not gitea_seperate_net_location
+
+- name: setup gitea db docker container on same host & docker network
+  docker_container:
+    name: gitea-db
+    image: postgres:9.6
+    restart_policy: unless-stopped
+    user: git:git
+    env:
+      POSTGRES_USER: gitea
+      POSTGRES_PASSWORD: '{{ gitea_db_passwd }}'
+      POSTGRES_DB: gitea
+    volumes:
+      - '{{ gitea_db_data_dir }}:/var/lib/postgresql/data'
+  when: not gitea_seperate_net_location
+
+- name: setup gitea app docker container on same host & docker network
+  docker_container:
+    name: gitea
+    image: gitea/gitea:latest
+    env:
+      USER_UID: '"{{ unifi_uid }}"'
+      USER_GID: '"{{ unifi_gid }}"'
+      DB_TYPE: postgres
+      DB_HOST: '{{ gitea_db_host }}'
+      DB_NAME: gitea
+      DB_USER: gitea
+      DB_PASSWD: '{{ gitea_db_passwd }}'
+    restart_policy: unless-stopped
+    volumes:
+      - '{{ gitea_app_data_dir }}:/data'
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+    ports:
+      - '{{ gitea_app_port }}:3000'
+      - '{{ gitea_ssh_port }}:22'
+  when: not gitea_seperate_net_location

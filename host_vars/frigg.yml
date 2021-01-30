@@ -49,7 +49,6 @@ installer_packages:
 ### General Settings
 # Use this to enable or disable admin user access, forcing sudo & root
 docker_group_admin_user: false  # disable docker group access for admin
-docker_install: false
 docker_edition: 'ce'  # ce or ee
 docker_home: /mnt/docker
 docker_image_directory: '{{ docker_home }}/images'
@@ -66,6 +65,20 @@ unifi_gid: 10010
 unifi_uid: 10010
 unifi_docker_directory: '{{ docker_home }}/unifi'
 
+### Gitea
+gitea_enable: true
+gitea_seperate_net_location: false
+gitea_setup_app_here: false  # for seperate install
+gitea_setup_db_here: false  # for seperate install
+gitea_app_port: 10200
+gitea_db_port: 10201  # used on seperate hosts for less addr. collision
+gitea_ssh_port: 10222
+gitea_db_host: 'db:{{ gitea_db_port }}'
+gitea_gid: 10002
+gitea_uid: 10002
+gitea_db_passwd: '{{ vault_gitea_db_passwd }}'
+gitea_user_passwd: '{{ vault_gitea_user_passwd }}'
+gitea_dir: '{{ docker_home }}/gitea'
 
 ###
 ### Pod Settings

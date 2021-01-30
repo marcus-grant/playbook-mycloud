@@ -7,4 +7,5 @@
   handlers:
     - import_tasks: handlers.yml
   pre_tasks:
-    - import_tasks: tasks/unifi.yml
+    - import_tasks: tasks/gitea.yml
+      when: gitea_enable
