@@ -4,21 +4,20 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Try kubespray or rancher to setup home k8s cluster
+- [ ] Let's encrypt egress (pod or bare?)
 - [ ] Docker: Gitea
 - [ ] Nginx reverse proxy pod
 - [ ] DynDNS daemon
-- [ ] Let's encrypt egress (pod or bare?)
-- [ ] Nextcloud: Deploy to frigg
+- [ ] Nextcloud: Deploy cluster or freyja
 - [ ] Encrypted FUSE mounts (things like gitea data)
-- [ ] Get rest of basic frigg plays to run
-- [ ] Add libvirt/kvm packages to be installed on frigg
 - [ ] NFS role (look for premade stuff) (both client & server)
 - [ ] Replacement for Plex (emby?, jellyfin?)
 - [ ] Add git clone installer task content
     - make sure to add task var for binary paths from cloned repo
 - [ ] Traefik: home deployment
     - http://bit.ly/2QGpliG might help
-- [ ] Kubespray
+- [ ] Change `kungsten` hosts in `production.yml` to FQDNs
 - [ ] Best combination of services for:
   - [ ] Personal music streaming
   - [ ] External streaming service aggregation
@@ -27,6 +26,7 @@ In-Progress
 - [ ] Docker: Web Things
 - [ ] Docker: Home-Assistant
 - [ ] Docker: Mastodon
+- [ ] Plan way to manage ansible clients' `/etc/ansible/hosts` file using ansible instead of passing around `production.yml` in a vault
 - [ ] Docker: PiHole
 - [ ] Docker: Huginn
 - [ ] Docker: [n8n](http://bit.ly/37uf14l) automater and event agent like huginn
@@ -126,3 +126,5 @@ Completed
 - [x] Try geerlingguy's docker role
 - [x] Apply common packages role (after editing to work on debian)
 - [x] Apply dotfiles role with server-only dotfiles
+- [x] Get some basic runners working
+- [x] Make playbook & inventory group for `kungsten`

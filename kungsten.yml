@@ -1,0 +1,18 @@
+---
+- hosts: kungsten
+  gather_facts: true
+  become: true
+  # pre_tasks:
+  vars_files:
+    - group_vars/vault.yml
+  roles:
+    # These first two should probably be in 'all'.
+    # ... or some more broad group
+    - role: geerlingguy.ntp  # move to all?
+      when: >
+        ansible_os_family == "Debian" or
+        ansible_os_family == "RedHat"
+    - role: geerlingguy.docker  # move to all?
+      when: >
+        ansible_os_family == "Debian" or
+        ansible_os_family == "RedHat"
