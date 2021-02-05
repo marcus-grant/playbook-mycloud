@@ -1,0 +1,47 @@
+# General variables
+# time_zone: America/New_York
+time_zone: Europe/Stockholm
+admin_user: '{{ vault_admin_user }}'
+
+### NTP Settings
+ntp_enabled: true  # (true) | false don't use on containerized VM (docker/vbox)
+ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
+ntp_manage_config: true  # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: ''  # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
+ntp_servers:  # defaults to below world pool (only works manage config)
+  - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+  - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+ntp_restrict:  # whitelists access for these hosts, loopback only by default
+  - "127.0.0.1"
+  - "::1"
+
+### Dotfiles
+dotfiles_local_root_dir: '~/.dots'
+dotfiles_git_server_base_url: 'github.com'
+dotfiles_git_username: 'marcus-grant'
+dotfiles_use_ssh: true
+dotfiles:
+  bash:
+    repo_name: 'dots-bash'
+    local_subdir_name: 'bash'
+    version: 'master'
+    links:
+      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc'}
+      - {dest: '~/.profile', src: '~/.dots/bash/profile'}
+      - {dest: '~/.bash_profile', src: '~/.dots/bash/bash_profile'}
+  vim:
+    repo_name: 'dots-vim'
+    local_subdir_name: 'vim'
+    version: 'master'
+    links:
+      - {dest: '~/.vim', src: '~/.dots/vim'}
+      - {dest: '~/.vimrc', src: '~/.dots/vim/vimrc'}
+  tmux:
+    repo_name: 'dots-tmux'
+    local_subdir_name: 'tmux'
+    version: 'master'
+    links:
+      - {dest: '~/.tmux', src: '~/.dots/tmux'}
+      - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
