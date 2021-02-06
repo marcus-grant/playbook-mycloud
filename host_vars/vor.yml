@@ -17,6 +17,24 @@ ntp_restrict:  # whitelists access for these hosts, loopback only by default
   - "127.0.0.1"
   - "::1"
 
+### Installer Role (Context-Less Program Installs)
+installer_packages:
+  - {method: apt, name: firewalld}
+  - {method: apt, name: openssl}
+  - {method: apt, name: unzip}
+  - {method: apt, name: git}
+  - {method: apt, name: vim}
+  - {method: apt, name: tmux}
+  - {method: apt, name: fzf}
+  - {method: apt, name: fd-find}
+  - {method: apt, name: ripgrep}
+  - {method: apt, name: tree}
+  - {method: apt, name: ranger}
+  - {method: apt, name: ncdu}
+  - {method: apt, name: htop}
+  - {method: apt, name: iotop}
+
+
 ### Dotfiles
 dotfiles_local_root_dir: '~/.dots'
 dotfiles_git_server_base_url: 'github.com'

@@ -13,7 +13,7 @@
         cache_valid_time: 600
       when: ansible_os_family == 'Debian'
   roles:
-    # - role: ./roles/installer
+    - role: ./roles/installer
     - role: geerlingguy.ntp
     #   - role: name=roles/qemu
     #     when: qemu_install
