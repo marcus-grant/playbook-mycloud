@@ -116,3 +116,32 @@ The `password_hash` ansible filter takes the password defined in `ansible_become
 The `groups` key in the `user` module of this task just adds the current user to a list of groups. In ansbile's YAML format, it's possible to define lists in one line. If there were two or more groups those could be added to the user as well by seperating them with commas within the square brackets like this: `[sudo, admin, chads]`. This user is added to the `sudo` group because a later task will allow it to escalate user priveleges through the `sudo` command.
 
 The rest of the parameters are fairly explanatory. The `state` parameter just determines how to handle this state of the user, with `present` telling it that it should just be modified if there's changes to be made. The `shell` parameter allows setting the startup shell that user will use when logged in, in this case `bash`. And finally `createhome` makes sure that a home directory for this user exists, with default location `/home/USERNAME`.
+
+### Give New User Sudo Priveleges
+
+It's generally adivisable when setting up servers like this, especially with heavy automation, that most of the root access happens with a priveleged non-root account. This means there's no need to connect to root directly through SSH and programs like `sudo` and linux's permissions system can be customized to restrict how root permissions are given out.
+
+The next task is to change the [sudoers][sudoers] file. This is the file that `sudo` uses to verify the access rights of different users, groups, and how those permissions are granted. For this task, it's easy enough to just enable the `sudo` group access when a password is given.
+
+```yaml
+# ./init.yml
+  # ...
+  tasks:
+  # ...
+    - name: 'Allow "sudo" group to sudo'
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo	ALL=(ALL:ALL) ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+```
+
+The `lineinfile` [module][lineinfile] gets used here to change the pre-existing `/etc/sudoers` that Debian provides. The Ubuntu one is compatible to this task as well.
+
+The `regexp` parameter is a [regular expression][regexp] that identifies the line to be replaced. Here the `%sudo` part indicates, with the `%`, that a group name is to be given priveleged permissions.
+
+The `line` parameter then defines the line in the file to replace it with. In this case it gives `ALL` permissions of root, and the last `ALL` means all privelege escalations apply. This mostly means entering root permissions requires using the user password.
+
+Then finally, and this is important for a sudoers file, a validation command is run to ensure that the changes are readable by the `sudo` program. This is done by running the sudo editting program `visudo` and passing it the `-cf` parameter which is used to imply only validation is needed, and the `%s` is there for ansible to pass along the file path.
+
