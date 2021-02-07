@@ -1,0 +1,17 @@
+---
+- hosts: all
+  user: root
+  tasks:
+    - name: 'what is become pw'
+      debug:
+        msg: '{{ansible_become_password}}'
+    
+    - name: Create main admin user
+      user:
+        name: '{{ main_admin_user }}'
+        password: '{{ ansible_become_password | password_hash("sha512", main_admin_user) }}'
+        groups: [sudo]
+        state: present
+        shell: /bin/bash
+        createhome: true
+    
