@@ -2,23 +2,36 @@
 - hosts: all
   user: root
   tasks:
-    - name: 'what is become pw'
-      debug:
-        msg: '{{ansible_become_password}}'
+    # - name: Create main admin user
+    #   user:
+    #     name: '{{ main_admin_user }}'
+    #     password: '{{ ansible_become_password | password_hash("sha512", main_admin_user) }}'
+    #     groups: [sudo]
+    #     state: present
+    #     shell: /bin/bash
+    #     createhome: true
     
-    - name: Create main admin user
-      user:
-        name: '{{ main_admin_user }}'
-        password: '{{ ansible_become_password | password_hash("sha512", main_admin_user) }}'
-        groups: [sudo]
-        state: present
-        shell: /bin/bash
-        createhome: true
+    # - name: 'Allow "sudo" group to sudo'
+    #   lineinfile:
+    #     path: /etc/sudoers
+    #     state: present
+    #     regexp: '^%sudo'
+    #     line: '%sudo	ALL=(ALL:ALL) ALL'
+    #     validate: '/usr/sbin/visudo -cf %s'
     
-    - name: 'Allow "sudo" group to sudo'
-      lineinfile:
-        path: /etc/sudoers
-        state: present
-        regexp: '^%sudo'
-        line: '%sudo	ALL=(ALL:ALL) ALL'
-        validate: '/usr/sbin/visudo -cf %s'
+    # - name: Install fail2ban
+    #   apt:
+    #     name: fail2ban
+    #     state: latest
+    
+    - name: Copy over the local fail2ban configuration
+      copy:
+        src: ./files/fail2ban/jail.local
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: 0644
+
+
+
+        

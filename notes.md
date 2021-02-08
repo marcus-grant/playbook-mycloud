@@ -145,3 +145,62 @@ The `line` parameter then defines the line in the file to replace it with. In th
 
 Then finally, and this is important for a sudoers file, a validation command is run to ensure that the changes are readable by the `sudo` program. This is done by running the sudo editting program `visudo` and passing it the `-cf` parameter which is used to imply only validation is needed, and the `%s` is there for ansible to pass along the file path.
 
+### Setup Fail2Ban
+
+A big step up in securing a server's remote connections is to install and configure [fail2ban][fail2ban]. This is an intrusion prevention tool that periodically scans linux logs for failed attempts to make a connection. When a specified number of failures happen within a time span it will then modify the firewall to block those addresses failing to authenticate, effectively banning them. This prevents attackers from brute forcing passwords and encryption keys long before they try enough permutations for a chance to connect.
+
+First things first, `fail2ban` needs to be installed, so let's add a task that does so using the `apt` ansible module.
+
+```yaml
+# ./init.yml
+# ...
+  tasks:
+  # ...
+    - name: Install fail2ban
+      apt:
+        name: fail2ban
+        state: latest
+```
+
+Next is configuring fail2ban under what conditions it will ban failed connection attempts. This is important to get right, because make it too strict and you may find yourself locked out of your own server.
+
+Linuxize has a great [guide][howtofail2ban] on how to customize Fail2ban further than will be done here. The file location being used in this next step is going to be in `/etc/fail2ban/jail.local`. Let's write that next ansible text.
+
+```yaml
+# ./init.yml
+# ...
+  tasks:
+  # ...
+    - name: Copy over the local fail2ban configuration
+      copy:
+        src: ./files/fail2ban/jail.local
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: 0644
+```
+
+Here the builtin [copy][copy] ansible module is used to copy over local file in this playbook shown below over to the remote server. The `src` parameter points to the file to copy over shown below in this playbook over to the remote server specified with `dest`. The `owner` and `group` defines the user and group ownership as `root`. Then it sets the read/write/execute permissions as `0644` in the `mode` parameter. Meaning it can be read and written by the owner user, and only read by everyone else. Next, write
+
+## References
+
+- [The Weltraumschaf: Hardening Your SSHd with Ansible][harden-ssh-ansible]
+[harden-ssh-ansible]: https://blog.weltraumschaf.de/blog/Hardening-Your-SSHd-with-Ansible/ "The Weltraumschaf: Hardening Your SSHd with Ansible"
+- [StackOverflow: Setting Password for Linux Users in Ansible with Hash][ansible-user-hash]
+[ansible-user-hash]: https://stackoverflow.com/a/50110960 "StackOverflow: Setting Password for Linux Users in Ansible with Hash"
+- [Wikipedia: Rainbow Table][rainbow]
+[rainbow]: https://en.wikipedia.org/wiki/Rainbow_table "Wikipedia: Rainbow Table"
+- [Ubuntu Wiki: Sudoers][sudoers]
+[sudoers]: https://help.ubuntu.com/community/Sudoers "Ubuntu Wiki: Sudoers"
+- [Ansible Documentation: lineinfile Module][lineinfile]
+[lineinfile]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html "Ansible Documentation: lineinfile Module"
+- [Wikipedia: Regular Expression][regexp]
+[regexp]: https://en.wikipedia.org/wiki/Regular_expression "Wikipedia: Regular Expression"
+- [Fail2Ban: Main Page][fail2ban]
+[fail2ban]: https://www.fail2ban.org/wiki/index.php/Main_Page "Fail2Ban: Main Page"
+- [Github: Jeff Geerling][geerlingguy]
+[geerlingguy]: https://github.com/geerlingguy "Github: Jeff Geerling"
+- [Linuxize: How to Install & Configure Fail2ban on Ubuntu][howtofail2ban]
+[howtofail2ban]: https://linuxize.com/post/install-configure-fail2ban-on-ubuntu-20-04/ "Linuxize: How to Install & Configure Fail2ban on Ubuntu"
+- [Ansible Documentation: Copy Module][copy]
+[copy]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html "Ansible Documentation: Copy Module"
