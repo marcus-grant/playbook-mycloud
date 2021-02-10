@@ -277,7 +277,9 @@ In `/etc/ssh/sshd_config` is the main configuration file for the SSH server itse
 - `PasswordAuthentication`: Is **very important to disable** because otherwise attempts to bypass public key authentication to simple passwords can be made, which is much easier to crack than public keys. This setting is rarely allowed, but for easy access to a server before configuring it further.
 - `AllowAgentForwarding`: This one is more optional, it allows local SSH keys to be used on remote systems, making a comprimised server able to connect to other managed servers through the clients accessing it.
 - `AllowTcpForwarding`: This essentially allows tunneling into the network of the server through SSH, which is a useful way to securely bridge networks, but a virtual private server is rarely a good use case for this so increase security by denying it.
-- `MaxAuthTries`: Defines the maxiumum times authentication attempts per connection, so basically each time an SSH client is run, setting this number lower means bots can't brute force as easily.
+- `MaxAuthTries`: Defines the maxiumum times authentication attempts per connection.
+  - This count increases every time someone attempts a new session, so every time ssh is called, authentication is allwed 3 attempts to get it right before the session closes.
+  - Decreasing this makes brute forcing passwords/keys more difficult.
 - `MaxSessions`: How many simultaneous SSH connections are allowed. Unless multiple administrators need to acess the server simultaneously.
   - Limits to two connections allows for automation systems like ansible to connect and for a single admin to connect at the same time.
   - Any more allowances makes it harder to detect active intruders.
@@ -285,7 +287,123 @@ In `/etc/ssh/sshd_config` is the main configuration file for the SSH server itse
 
 ### Firewall
 
-[Jeff Geerling][geerlingguy], one of the most outspoken developers of ansible has yet another great starter role. This time it's for a basic firewall based on Linux's [IPTables](https://wiki.archlinux.org/index.php/iptables) packet filtering backend. For most VPS use cases only simple firewalls are needed, usually where everything except a few select ports are filtered. It's rare to need more than HTTP, HTTPS, and a non-standard SSH port open. Everything else gets reverse proxied when using HTTP(S) or tunneled through SSH.
+Now for the second most important step after hardening the SSH server, hardening the firewall. For now this will be done with `iptables` a basic linux firewall configurator, that will soon be replaced with `nftables` as the default.
+
+There isn't a good utility for it in ansible yet though so we'll define the firewall rules with `iptables`. Start with a task to ensure `iptables` is installed.
+
+```yaml
+    - name: Install iptables with apt
+      package:
+        name: iptables
+        state: latest
+```
+
+Next, clear the pre-existing firewall rules if there are any. This is an initialization playbook so this won't be run with any new rules you'd want to keep. This gets done with the ansible [module][ansibleiptables] and using the `flush` parameter.
+
+```yaml
+# (file) ./init.yml
+    - name: Flush existing firewall rules
+      iptables:
+        flush: true
+```
+
+Now for the first firewall rule where each gets its own anisble task. This one will permit all loopback traffic. Loopback traffic is one way applications on the same machine communicate with each other so this rule must allow them to do so.
+
+```yaml
+    - name: Firewall Rule - accept all loopback traffic
+      iptables:
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+```
+
+The `chain` parameter represents `iptables` concept of a chain which includes `INPUT`, `FORWARD`, `OUTPUT`, `PREROUTING`, `POSTROUTING`, `SECMARK`, `CONNSECMARK`. These specify where in the firewall chain the rule applies, and `INPUT` is basically the first start of all loopback traffic. The `jump` parameter specifies what to do with the traffic, in this case `ACCEPT` which permits it to pass, as opposed to `DROP` or `REJECT`.
+
+The next task is for a rule to permit all established connections. This is convenient for a lot of uses, including not kicking us out of SSH connections while trying out this ansible play.
+
+```yaml
+- name: Firewall Rule - allow established connections
+  iptables:
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+```
+
+Here's the first use of the `cstate` parameter. It's used in `iptables` to create complex rules. In this case checking for connection states for them being `ESTABLISHED` and `ACCEPT`ing them if they are.
+
+Now for some more specific rules that will `ACCEPT` all the specific ports that most public servers should need. First, let's permit `icmp` protocols, which is the **ping** protocol.
+
+```yaml
+- name: Firewall Rule - accept ICMP protocols for ping traffic
+  iptables:
+    chain: INPUT
+    jump: ACCEPT
+    protocol: icmp
+```
+
+This is a simple rule, `INPUT` is the public facing part of the firewall chain, and it should `ACCEPT` the `icmp` `protocol`. This allows people to ping the server which is relatively harmless in most cases. Next let's permit the all important SSH connection.
+
+```yaml
+- name: 'Firewall Rule - accept SSH traffic on port {{ custom_ssh_port }}'
+  iptables:
+    chain: INPUT
+    destination_port: '{{ custom_ssh_port }}'
+    jump: ACCEPT
+    protocol: tcp
+```
+
+A custom port was defined in the inventory variable `custom_ssh_port` so that variable needs to be used on the `destination_port` parameter to permit it. The `protocol` needs to be defined for these ports as well as `tcp`. And again `INPUT` and `ACCEPT` are used to accept all traffic with this port at the first chain of the firewall.
+
+Next let's allow both HTTP & HTTPS traffic which is important for any web service that might need to be accessible from this server. These are always located on ports `80` & `443` respectively.
+
+```yaml
+- name: Firewall Rule - accept port 80/HTTP traffic
+  iptables:
+    chain: INPUT
+    destination_port: 80
+    jump: ACCEPT
+    protocol: tcp
+
+- name: Firewall Rule - accept port 443/HTTPS traffic
+  iptables:
+    chain: INPUT
+    destination_port: 443
+    jump: ACCEPT
+    protocol: tcp
+```
+
+Both these rules do the same thing, except on different ports. For each on the `INPUT` chain HTTP and HTTPS ports are `ACCEPT`ed and both require the `tcp` `protocol`.
+
+Most people don't need more ports than these for their personal public server projects, with the possible exception of installing a VPN, which is usually port 1194 on the UDP protocol. If there are other ports that are needed, those should be defined in another play using tasks like these customized for the ports needed. Leaving ports closed until they're needed is a good security practice.
+
+Finally, let's allow firewall do what it is intended to do, block undesired traffic. Before traffic rules were defined to allow a few kinds of traffic through, now let's block everything else as the final rule. Meaning if none of these previous rules match the traffic, block everything that doesn't.
+
+```yaml
+- name: Firewall Rule - drop any traffic without rule
+  iptables:
+    chain: INPUT
+    jump: DROP
+```
+
+Because the logic behind this rule is so simple, the task to define it is as well. Here `DROP` is first used and it means it simply won't respond to the incoming traffic. This is different from `REJECT` where a response with details about the rejection are give. And because no `protocol`, or `destination_port` is defined it will apply to any `iptables` traffic that doesn't have a rule.
+
+To finish off the firewall tasks, let's make one that persists all these rules between server reboots. This will be done by installing the `iptables-persistent` & `netfilter-persistent` packages.
+
+```yaml
+- name: Install `netfilter-persistent` && `iptables-persistent` packages
+    apt:
+      name: '{{ item }}'
+      state: present
+    loop:
+     - iptables-persistent
+     - netfilter-persistent
+  when: ansible_os_family == "Debian"
+```
+
+Here the `loop` module is used again since two packages are needed. The `when` parameter just checks for a conditional statement being true. In this case `ansible_os_family` which has the value `Debian` whenever a Debian-based version of linux is in use. This includes Debian itself of course but also Ubuntu and its derivatives.
+
+
 
 ## References
 
@@ -315,3 +433,6 @@ In `/etc/ssh/sshd_config` is the main configuration file for the SSH server itse
 [loop]: https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html "Ansible Documentation: Loops"
 - [Mozilla InfoSec: OpenSSH Server Recommended Settins][mozssh]
 [mozssh]: https://infosec.mozilla.org/guidelines/openssh.html "Mozilla InfoSec: OpenSSH Server Recommended Settins"
+- [Ansible Documentation: IPTables Module][ansibleiptables]
+[ansibleiptables]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/iptables_module.html "Ansible Documentation: IPTables Module"
+[ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
