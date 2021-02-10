@@ -52,7 +52,7 @@ SSH is the main way to administer and sometimes even tunneling connections into 
 
 Because this will involve first connecting to the server with default settings, often with a provided SSH key, an initial play will need to be run which will set new SSH settings and users for future ansible connections to make. Trying to do all of this in a single play is a massive pain, so better to seperate this out into a separate `init.yml` play.
 
-#### Update the Vault Encrypted Inventory
+### Update the Vault Encrypted Inventory
 
 ```bash
 ansible-vault edit inventory.yml
@@ -90,6 +90,24 @@ Some notes about each line:
   - This should be the password to be assigned to the new users' sudo access.
 - `ansible_ssh_private_keyfile`: the SSH private key file to use to connect to the host.
 
+## Update Packages
+
+A good simple first task is to update all the packages initially installed in the operating system. Keeping up to date packages is an important part of preventing exploits as updated software will generally try and fix security holes. Start with a play file called `init.yml` in the root of the playbook directory.
+
+```yaml
+---
+- hosts: all
+  user: root
+  tasks:
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+```
+
+The task simply uses the [apt][ansapt] module from ansible to tell the remote server's `apt` package manager to upgrade all `dist` packages. This is different from a full upgrade in that it will only upgrade dependcies that have changed with each upgrade. This is a less risky upgrade that isn't as likely to cause breaking changes in the installed packages.
+
+## Add an Admin User that isn't Root
+
 With this information entered into the inventory file, the play can be written with variable substitution to fill in all the relevant information to initialize the server. Now create that play file, calling it `init.yml` in the root of the playbook directory.
 
 ```yaml
@@ -116,6 +134,10 @@ The `password_hash` ansible filter takes the password defined in `ansible_become
 The `groups` key in the `user` module of this task just adds the current user to a list of groups. In ansbile's YAML format, it's possible to define lists in one line. If there were two or more groups those could be added to the user as well by seperating them with commas within the square brackets like this: `[sudo, admin, chads]`. This user is added to the `sudo` group because a later task will allow it to escalate user priveleges through the `sudo` command.
 
 The rest of the parameters are fairly explanatory. The `state` parameter just determines how to handle this state of the user, with `present` telling it that it should just be modified if there's changes to be made. The `shell` parameter allows setting the startup shell that user will use when logged in, in this case `bash`. And finally `createhome` makes sure that a home directory for this user exists, with default location `/home/USERNAME`.
+
+## Set a Root Password
+
+Some Virtual Private Server providers don't provide a root password making it difficult to log into their rescue console to save yourself from any administrative mistakes. Let's start this ansible playbook with a simple task by 
 
 ### Give New User Sudo Priveleges
 
@@ -285,7 +307,7 @@ In `/etc/ssh/sshd_config` is the main configuration file for the SSH server itse
   - Any more allowances makes it harder to detect active intruders.
   - If locked out and it's difficult to find an idle connection reboot the virtual server on the provider's interface and check logs to make sure it wasn't an intruder.
 
-### Firewall
+## Firewall
 
 Now for the second most important step after hardening the SSH server, hardening the firewall. For now this will be done with `iptables` a basic linux firewall configurator, that will soon be replaced with `nftables` as the default.
 
@@ -436,3 +458,6 @@ Here the `loop` module is used again since two packages are needed. The `when` p
 - [Ansible Documentation: IPTables Module][ansibleiptables]
 [ansibleiptables]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/iptables_module.html "Ansible Documentation: IPTables Module"
 [ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
+
+- [Ansible Documentation: Apt Module][ansapt]
+[ansapt]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html "Ansible Documentation: Apt Module"

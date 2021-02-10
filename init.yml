@@ -2,6 +2,10 @@
 - hosts: all
   user: root
   tasks:
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+
     # - name: Create main admin user
     #   user:
     #     name: '{{ main_admin_user }}'
