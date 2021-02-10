@@ -2,32 +2,78 @@
 - hosts: all
   user: root
   tasks:
+    - name: Update package cache
+      apt:
+        update_cache: true
+
     - name: Upgrade all packages
       apt:
-        upgrade: dist
+        upgrade: full
+    
+    - name: Create main admin user
+      user:
+        name: '{{ main_admin_user }}'
+        password: '{{ ansible_become_password | password_hash("sha512", main_admin_user) }}'
+        groups: [sudo]
+        state: present
+        shell: /bin/bash
+        createhome: true
+    
+    - name: 'Allow "sudo" group to sudo'
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo	ALL=(ALL:ALL) ALL'
+        validate: '/usr/sbin/visudo -cf %s'
 
-    # - name: Create main admin user
-    #   user:
-    #     name: '{{ main_admin_user }}'
-    #     password: '{{ ansible_become_password | password_hash("sha512", main_admin_user) }}'
-    #     groups: [sudo]
-    #     state: present
-    #     shell: /bin/bash
-    #     createhome: true
+    - name: Install fail2ban
+      apt:
+        name: fail2ban
+        state: latest
     
-    # - name: 'Allow "sudo" group to sudo'
-    #   lineinfile:
-    #     path: /etc/sudoers
-    #     state: present
-    #     regexp: '^%sudo'
-    #     line: '%sudo	ALL=(ALL:ALL) ALL'
-    #     validate: '/usr/sbin/visudo -cf %s'
-    
-    # - name: Install fail2ban
-    #   apt:
-    #     name: fail2ban
-    #     state: latest
-    
+    - name: Copy over the local fail2ban configuration
+      copy:
+        src: ./files/fail2ban/jail.local
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Add local public SSH key to main admin user
+      authorized_key:
+        user: '{{ main_admin_user }}'
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+    - name: Harden SSHd configuration
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '{{ item.regexp }}'
+        line: '{{ item.line }}'
+        state: present
+      loop:
+        - regexp: '^#?Port'
+          line: 'Port {{ custom_ssh_port }}'
+        - regexp: '^#?PermitRootLogin'
+          line: 'PermitRootLogin no'
+        - regexp: '^#?PasswordAuthentication'
+          line: 'PasswordAuthentication no'
+        - regexp: '^#?PermitEmptyPasswords'
+          line: 'PermitEmptyPasswords no'
+        - regexp: '^#?AllowAgentForwarding'
+          line: 'AllowAgentForwarding no'
+        - regexp: '^#?AllowTcpForwarding'
+          line: 'AllowTcpForwarding no'
+        - regexp: '^#?MaxAuthTries'
+          line: 'MaxAuthTries 3'
+        - regexp: '^#?MaxSessions'
+          line: 'MaxSessions 3'
+        - regexp: '^#?TCPKeepAlive'
+          line: 'TCPKeepAlive no'
+        - regexp: '^#?UseDNS'
+          line: 'UseDNS no'
+
     - name: Install iptables with apt
       apt:
         name: iptables
@@ -84,3 +130,13 @@
         - iptables-persistent
         - netfilter-persistent
       when: ansible_os_family == "Debian"
+
+    - name: Restart server
+      shell: '/sbin/shutdown -r now "Server initial setup complete, restarting to finish"'
+      async: 1
+      poll: 0
+    - name: Change ansible connection settings to new SSH configuration
+      set_fact: wait_host='{{ ansible_host }}'
+    - name: Wait for restarted server to come back online
+      local_action: wait_for host={{wait_host}} delay=5 port={{custom_ssh_port}} connect_timeout=200 state=started
+      become: false

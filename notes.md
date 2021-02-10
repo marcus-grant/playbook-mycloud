@@ -93,18 +93,21 @@ Some notes about each line:
 ## Update Packages
 
 A good simple first task is to update all the packages initially installed in the operating system. Keeping up to date packages is an important part of preventing exploits as updated software will generally try and fix security holes. Start with a play file called `init.yml` in the root of the playbook directory.
-
 ```yaml
 ---
 - hosts: all
   user: root
   tasks:
-    - name: Upgrade all packages
-      apt:
-        upgrade: dist
+  - name: Update package cache
+        apt:
+          update_cache: true
+
+      - name: Upgrade all packages
+        apt:
+          upgrade: full
 ```
 
-The task simply uses the [apt][ansapt] module from ansible to tell the remote server's `apt` package manager to upgrade all `dist` packages. This is different from a full upgrade in that it will only upgrade dependcies that have changed with each upgrade. This is a less risky upgrade that isn't as likely to cause breaking changes in the installed packages.
+The task simply uses the [apt][ansapt] module from ansible to tell the remote server's `apt` package manager to update all package metadata in the package managers cache using the `update_cache` parameter. Then in the next task upgrade all packages by using the `upgrade` parameter set to `full`. This is different from the other possible options like `safe`, or `dist`. The `safe` options will check to make sure the upgrade only upgrades packages that are safe to upgrade without breaking anything. And `dist` will perform a `dist-upgrade` using the `apt` package manger.
 
 ## Add an Admin User that isn't Root
 
@@ -426,6 +429,196 @@ To finish off the firewall tasks, let's make one that persists all these rules b
 Here the `loop` module is used again since two packages are needed. The `when` parameter just checks for a conditional statement being true. In this case `ansible_os_family` which has the value `Debian` whenever a Debian-based version of linux is in use. This includes Debian itself of course but also Ubuntu and its derivatives.
 
 
+## Restart the Server to Finish
+
+As a last set of tasks it would be nice to automatically reboot the server, guaranteeing all changes are active when the play finishes. It is also handy to test to see if the new security changes will still permit connecting to the server with the new settings.
+
+To do this, use the ansible [shell][ansshell] module to run a shell command on the remote server telling it to reboot. The `async` and `poll` values are there to override ansible's normal behavior which is to check the results of its used modules since those won't respond during the restart.
+
+```yaml
+- name: Restart server
+  shell: '/sbin/shutdown -r now "Server initial setup complete, restarting to finish"'
+  async: 1
+  poll: 0
+- name: Change ansible connection settings to new SSH configuration
+  set_fact: wait_host='{{ ansible_host }}'
+- name: Wait for restarted server to come back online
+  local_action: wait_for host={{wait_host}} delay=5 port={{custom_ssh_port}} connect_timeout=200 state=started
+  become: false
+```
+
+Next, the ansible [set_fact][anssetfact] module is used to set a variable named `wait_host` with the information of the current session which will change as we wait for a reboot.
+
+Waiting for the host to reboot is done with the module detailed in this ansible [guide][ansible-local-action] if you want to learn more details. Basically what this task does is setup a string representing what actions are done locally seperate from executing the playbook normally. In this case it will `wait_for` the recorded `wait_host` host to reconnect to every `5` seconds, on the newly defined `custom_ssh_port`. If it can't re-establish a connection after the `connection_timeout=200` specified 200 seconds, then the play will quit with an error state indicating the time out happened. This is useful for logging and feedback purposes to admins because a failure to reboot or to reconnect means manual intervention is necessary.
+
+## Summary
+
+If all is well and done the `init.yml` play should look something like this:
+
+```yaml
+---
+- hosts: all
+  user: root
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: true
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: full
+    
+    - name: Create main admin user
+      user:
+        name: '{{ main_admin_user }}'
+        password: '{{ ansible_become_password | password_hash("sha512", main_admin_user) }}'
+        groups: [sudo]
+        state: present
+        shell: /bin/bash
+        createhome: true
+    
+    - name: 'Allow "sudo" group to sudo'
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo	ALL=(ALL:ALL) ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: Install fail2ban
+      apt:
+        name: fail2ban
+        state: latest
+    
+    - name: Copy over the local fail2ban configuration
+      copy:
+        src: ./files/fail2ban/jail.local
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Add local public SSH key to main admin user
+      authorized_key:
+        user: '{{ main_admin_user }}'
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+    - name: Harden SSHd configuration
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '{{ item.regexp }}'
+        line: '{{ item.line }}'
+        state: present
+      loop:
+        - regexp: '^#?Port'
+          line: 'Port {{ custom_ssh_port }}'
+        - regexp: '^#?PermitRootLogin'
+          line: 'PermitRootLogin no'
+        - regexp: '^#?PasswordAuthentication'
+          line: 'PasswordAuthentication no'
+        - regexp: '^#?PermitEmptyPasswords'
+          line: 'PermitEmptyPasswords no'
+        - regexp: '^#?AllowAgentForwarding'
+          line: 'AllowAgentForwarding no'
+        - regexp: '^#?AllowTcpForwarding'
+          line: 'AllowTcpForwarding no'
+        - regexp: '^#?MaxAuthTries'
+          line: 'MaxAuthTries 3'
+        - regexp: '^#?MaxSessions'
+          line: 'MaxSessions 3'
+        - regexp: '^#?TCPKeepAlive'
+          line: 'TCPKeepAlive no'
+        - regexp: '^#?UseDNS'
+          line: 'UseDNS no'
+
+    - name: Install iptables with apt
+      apt:
+        name: iptables
+        state: latest
+
+    - name: Flush existing firewall rules
+      iptables:
+        flush: true
+
+    - name: Firewall Rule - accept all loopback traffic
+      iptables:
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+    
+    - name: Firewall Rule - allow established connections
+      iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: 'Firewall Rule - accept SSH traffic on port {{ custom_ssh_port }}'
+      iptables:
+        chain: INPUT
+        destination_port: '{{ custom_ssh_port }}'
+        jump: ACCEPT
+        protocol: tcp
+    
+    - name: Firewall Rule - accept port 80/HTTP traffic
+      iptables:
+        chain: INPUT
+        destination_port: 80
+        jump: ACCEPT
+        protocol: tcp
+
+    - name: Firewall Rule - accept port 443/HTTPS traffic
+      iptables:
+        chain: INPUT
+        destination_port: 443
+        jump: ACCEPT
+        protocol: tcp
+
+    - name: Firewall Rule - drop any traffic without rule
+      iptables:
+        chain: INPUT
+        jump: DROP
+
+    - name: 'Install "netfilter-persistent" && "iptables-persistent" packages'
+      apt:
+        name: '{{ item }}'
+        state: present
+      loop:
+        - iptables-persistent
+        - netfilter-persistent
+      when: ansible_os_family == "Debian"
+
+    - name: Restart server
+      shell: '/sbin/shutdown -r now "Server initial setup complete, restarting to finish"'
+      async: 1
+      poll: 0
+    - name: Change ansible connection settings to new SSH configuration
+      set_fact: wait_host='{{ ansible_host }}'
+    - name: Wait for restarted server to come back online
+      local_action: wait_for host={{wait_host}} delay=5 port={{custom_ssh_port}} connect_timeout=200 state=started
+      become: false
+```
+
+And the inventory file should look something like this but with your custom values filled in:
+
+```yaml
+---
+all:
+  children:
+    cloud:
+      vars:
+        custom_ssh_port: 12345 # use custom port 10000 ~ 65535
+        main_admin_user: someone
+      hosts:
+        srv1: # a host named 'srv1'
+          # this is the default SSH key
+          ansible_ssh_private_key_file: ~/.ssh/id_rsa
+          ansible_host: example.com
+          ansible_port: '{{custom_ssh_port}}'
+          ansible_user: '{{main_admin_user}}'
+          ansible_become_password: 'a-secure-password'
+```
 
 ## References
 
@@ -457,7 +650,13 @@ Here the `loop` module is used again since two packages are needed. The `when` p
 [mozssh]: https://infosec.mozilla.org/guidelines/openssh.html "Mozilla InfoSec: OpenSSH Server Recommended Settins"
 - [Ansible Documentation: IPTables Module][ansibleiptables]
 [ansibleiptables]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/iptables_module.html "Ansible Documentation: IPTables Module"
-[ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
-
 - [Ansible Documentation: Apt Module][ansapt]
 [ansapt]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html "Ansible Documentation: Apt Module"
+- [Ansible Documentation: Shell Module][ansshell]
+[ansshell]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html "Ansible Documentation: Shell Module"
+- [Ansible Documentation: set_fact Module][anssetfact]
+[anssetfact]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/set_fact_module.html "Ansible Documentation: set_fact Module"
+- [Ansible Documentation: Controlling Where Tasks Run][ansible-local-actoin]
+[ansible-local-action]: https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html "Ansible Documentation: Controlling Where Tasks Run"
+
+[ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
