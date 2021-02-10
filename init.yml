@@ -32,6 +32,39 @@
         group: root
         mode: 0644
 
+    - name: Add local public SSH key to main admin user
+      authorized_key:
+        user: '{{ main_admin_user }}'
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
-
+    - name: Harden SSHd configuration
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '{{ item.regexp }}'
+        line: '{{ item.line }}'
+        state: present
+      loop:
+        - regexp: '^#?Port'
+          line: 'Port {{ custom_ssh_port }}'
+        - regexp: '^#?PermitRootLogin'
+          line: 'PermitRootLogin no'
+        - regexp: '^#?PasswordAuthentication'
+          line: 'PasswordAuthentication no'
+        - regexp: '^#?PermitEmptyPasswords'
+          line: 'PermitEmptyPasswords no'
+        - regexp: '^#?AllowAgentForwarding'
+          line: 'AllowAgentForwarding no'
+        - regexp: '^#?AllowTcpForwarding'
+          line: 'AllowTcpForwarding no'
+        - regexp: '^#?MaxAuthTries'
+          line: 'MaxAuthTries 3'
+        - regexp: '^#?MaxSessions'
+          line: 'MaxSessions 3'
+        - regexp: '^#?TCPKeepAlive'
+          line: 'TCPKeepAlive no'
+        - regexp: '^#?UseDNS'
+          line: 'UseDNS no'
+        - regexp: '^#?AllowAgentForwarding'
+          line: 'AllowAgentForwarding no'
         

@@ -4,6 +4,9 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Merge this & workstation playbooks into one new repo
+- [ ] Move all todos to issues, starting with higher priority
+- [ ] YAMLLint & AnsibleLint entire mycloud+myworkstation project
 - [ ] Try kubespray or rancher to setup home k8s cluster
 - [ ] Let's encrypt egress (pod or bare?)
 - [ ] Docker: Gitea
