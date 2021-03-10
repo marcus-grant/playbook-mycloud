@@ -19,7 +19,6 @@ ntp_restrict:  # whitelists access for these hosts, loopback only by default
 
 ### Installer Role (Context-Less Program Installs)
 installer_packages:
-  - {method: apt, name: firewalld}
   - {method: apt, name: openssl}
   - {method: apt, name: unzip}
   - {method: apt, name: git}
@@ -41,14 +40,6 @@ dotfiles_git_server_base_url: 'github.com'
 dotfiles_git_username: 'marcus-grant'
 dotfiles_use_ssh: true
 dotfiles:
-  bash:
-    repo_name: 'dots-bash'
-    local_subdir_name: 'bash'
-    version: 'master'
-    links:
-      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc'}
-      - {dest: '~/.profile', src: '~/.dots/bash/profile'}
-      - {dest: '~/.bash_profile', src: '~/.dots/bash/bash_profile'}
   vim:
     repo_name: 'dots-vim'
     local_subdir_name: 'vim'
@@ -63,3 +54,6 @@ dotfiles:
     links:
       - {dest: '~/.tmux', src: '~/.dots/tmux'}
       - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
+
+### K3S
+# k3s_build_cluster
