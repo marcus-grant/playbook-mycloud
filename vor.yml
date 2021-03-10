@@ -15,8 +15,6 @@
   roles:
     - role: ./roles/installer
     - role: geerlingguy.ntp
-    #   - role: name=roles/qemu
-    #     when: qemu_install
     # - role: marcus-grant.mydotfiles
     #   when: >
     #     ansible_os_family == "Debian" or
