@@ -17,6 +17,19 @@ ntp_restrict:  # whitelists access for these hosts, loopback only by default
   - "127.0.0.1"
   - "::1"
 
+### MySQL Geerling
+# https://github.com/geerlingguy/ansible-role-mysql
+mysql_user_home: /root
+mysql_root_username: root
+mysql_root_password: '{{ vault_mysql_root_password }}'
+mysql_enabled_on_startup: true
+mysql_packages:  # This sets up mariaDB as the MySQL replacement
+  - mariadb-client
+  - mariadb-server
+  - python3-mysqldb
+  - python-mysqldb
+
+
 ### Installer Role (Context-Less Program Installs)
 installer_packages:
   - {method: apt, name: openssl}
@@ -54,6 +67,3 @@ dotfiles:
     links:
       - {dest: '~/.tmux', src: '~/.dots/tmux'}
       - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
-
-### K3S
-# k3s_build_cluster

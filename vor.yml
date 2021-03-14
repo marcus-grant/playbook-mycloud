@@ -12,9 +12,19 @@
         update_cache: true
         cache_valid_time: 600
       when: ansible_os_family == 'Debian'
+      tags: ['pre','apt','update']
+    - name: Install some packages
+      apt:
+        name: '{{ item }}'
+        state: present
+      loop:
+        - python-pip
+        - python3
+        - python3-pip
+      tags: ['init','pre','apt']
   roles:
-    - role: ./roles/installer
-    - role: geerlingguy.ntp
+    - { role: geerlingguy.ntp, tags: ['ntp'] }
+    - { role: geerlingguy.mysql, tags: ['mysql'] }
     # - role: marcus-grant.mydotfiles
     #   when: >
     #     ansible_os_family == "Debian" or
