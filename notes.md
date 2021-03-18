@@ -620,6 +620,23 @@ all:
           ansible_become_password: 'a-secure-password'
 ```
 
+
+## Easy & Secure Service Deployment with Ansible, Docker & Traefik
+
+Traefik is an awesome service discovery, routing, proxying, HTTP(S) serving, and SSL certificate signing utility that is at its best when being used with either a docker server or managing the ingress of a kubernetes cluster. Think of it as an even more useful Nginx or Apache, particularly for our containerized computing era. Here it will be used to easily and flexibly route subdomains of a public server with an associated domain name, `example.com`, to any number of useful services on docker.
+
+Untill I've come up with the best way to deploy kubernetes on cheap VPS servers without breaking the bank, I'm reserving kubernetes for my homelab where I have plenty of spare computing resources to orchestrate. It might not also be the best resource for newer developers who just want to get shit done. So I'll be sticking to a single docker host for this and the next few guides I publish.
+
+The docker server however does have some problems. It is designed to be a run as root making it a single point of failure to exploit to gain access to basically anything on that server. This is a major security problem, but one that can be mitigated, even for Traefik which requires access to the docker daemon, *(the thing that gives docker root access)*. This is by proxying the docker socket.
+
+### A Docker Socket Proxy Has Entered the Chat
+
+There's a wonderful docker container that can be used to solve this security hole. Instead of allowing publicly facing containers like Traefik have unrestricted access to the Docker socket, instead it's possible to proxy its access to the socket through [Tecnativa's Docker Socket Proxy][dock-sock-prox] container. This means Docker's socket file is never directly exposed to the public, patching **a lot** potential attack surfaces.
+
+### Set Up Docker Socket Proxy
+
+
+
 ## References
 
 - [The Weltraumschaf: Hardening Your SSHd with Ansible][harden-ssh-ansible]
@@ -660,3 +677,5 @@ all:
 [ansible-local-action]: https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html "Ansible Documentation: Controlling Where Tasks Run"
 
 [ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
+- [Github: Tecnativa/docker-socket-proxy][dock-sock-prox]
+[dock-sock-prox]: https://github.com/Tecnativa/docker-socket-proxy "Github: Tecnativa/docker-socket-proxy"
