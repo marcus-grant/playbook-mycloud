@@ -633,7 +633,82 @@ The docker server however does have some problems. It is designed to be a run as
 
 There's a wonderful docker container that can be used to solve this security hole. Instead of allowing publicly facing containers like Traefik have unrestricted access to the Docker socket, instead it's possible to proxy its access to the socket through [Tecnativa's Docker Socket Proxy][dock-sock-prox] container. This means Docker's socket file is never directly exposed to the public, patching **a lot** potential attack surfaces.
 
-### Set Up Docker Socket Proxy
+### Set Up Docker Socket Proxy Role
+
+This set up will be done through an individual ansible role since it has a lot of potential for reuse. **INSERT INSTRUCTIONS ON ROLE REPO SETUP**
+
+### Set Up Docker Socket Proxy Tasks
+
+For this task ansible will use an ansible module called [docker_network][ans:docker-network] which helps ansible setup discrete networks within docker. This is needed to segregate which networks get access to the docker socket, through the `docker-socket-proxy` container. The proxy container will be placed only inside this segregated network, seperate from Docker's default `bridge` network. Everything else we want to be publicly accessible will just go into the default network.
+
+Open up the role's `main.yml` task in `roles/docker-traefik-proxy`. Then add these lines:
+
+```yml
+---
+# ./roles/docker-traefik-proxy/tasks/main.yml
+- name: >
+    'Set Docker net {{ docker_socket_proxy_network }} for proxied containers'
+  community.docker.docker_network:
+    name: '{{ docker_socket_proxy_network }}' 
+```
+
+Pretty easy, it just adds a named nework according to the variable `docker_socket_proxy_network`. Which will have the default docker network settings applied to it, which is fine for our needs. Now there should be a default variable file that will set this network name in the absence of any other definition for this variable. Go to `./roles/docker-traefik-proxy/defaults/main.yml` and add the below code.
+
+```yml
+---
+# ./roles/docker-traefik-proxy/defaults/main.yml
+# Defaults file for docker-traefik-proxy role
+docker_socket_proxy_network: proxy
+docker_socket_proxy_port: '2375'
+docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
+
+# General docker settings
+docker_socket_mapped_path: /var/run/docker.sock
+```
+
+As can be seen, theres some more variables there than the one the first task will be looking for. In `docker_socket_proxy` is the value `proxy` which is the name of the segregated network `docker-socket-proxy` will be in. There's also a variable for the port docker will be looking for in the external network (on the computer docker is installed on) to route traffic to the proxy. In this case it will just be set to the default the container looks for `2375`. Then is a variable to set the name of the proxy Docker container to pull from Docker's hub. The only value that might want to be changed is what comes after `:` if you want a specific version of this container, otherwise `latest` is a good default to always pull the latest version. Then finally is variable for the path to the docker socket, the default value is the one docker uses by default, leave it.
+
+Now that there's default variables for all future settings of this role let's continue with defining the main tasks within the role, let's add in a task that uses Ansible's [docker-container][ans:docker-container] module. Go back to `./roles/docker-traefik-proxy/tasks/main.yml` and add this task.
+
+```yml
+- name: Docker Socket Proxy Container
+  community.docker.docker_container:
+    name: dock-sock-prox
+    state: started
+    container_default_behavior: compatibility
+    restart_policy: unless-stopped
+    image: '{{ docker_socket_proxy_image }}'
+    network_mode: '{{ docker_socket_proxy_network }}'
+    # networks:
+    #   - name: '{{ docker_socket_proxy_network }}'
+    ports:
+      - '{{ docker_socket_proxy_port }}:2375'
+    volumes:
+      - '{{ docker_socket_mapped_path }}:/var/run/docker.sock'
+  register: varDockSockProx
+
+- name: Restart docker container dock-sock-prox due to change detected
+  community.docker.docker_container:
+    name: dock-sock-prox
+    container_default_behavior: compatibility
+    restart: true
+  when: varDockSockProx.changed
+
+```
+
+There's two tasks, one to download, configure then run the container, and one to check for a change in Docker's containers set by the first task and to restart the container if that is the case. Here's a quick list of the configurations of these tasks:
+
+- `name`: Sets the container name
+- `state`: The state of the container when the task is done, started just ensures it's running.
+- `container_default_behavior`: is a new setting for the role that ensures a set of default behaviors of the module is respected, `compatibility` will be the default in the future, but there's an old setting for that which is being deprecated and this avoids warning messages from showing up.
+- `restart_policy`: Tells docker when to automatically restart a container, this makes sure it will always do so unless explicitly told not to do it.
+- `ports`: Defines which ports docker should listen to and then forward to inside the container, in this case it's from the variable defined earlier and to the port the proxy expects, `2375`.
+- `volumes`: Maps file/folder locations outside the docker container to places inside of it and here it's just mapping the location of Docker's socket file it will need to proxy to.
+- `register`: Is an option for Ansible tasks to register information about the task into a variable, here `varDockSockProx` is that variable.
+- `restart`: Is used here to explicitly restart a docker container.
+- `when`: Is an Ansible option to only run the task when a condition is met, in this case the registered variable which holds the property `changed` indicating that something changed in the task where it was registered.
+
+
 
 
 
@@ -679,3 +754,7 @@ There's a wonderful docker container that can be used to solve this security hol
 [ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
 - [Github: Tecnativa/docker-socket-proxy][dock-sock-prox]
 [dock-sock-prox]: https://github.com/Tecnativa/docker-socket-proxy "Github: Tecnativa/docker-socket-proxy"
+- [Ansible Module Documentation: Docker Network][ans:docker-network]
+[ans:docker-network]: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_network_module.html#ansible-collections-community-docker-docker-network-module "Ansible Module Documentation: Docker Network"
+- [Ansible Module Documentation: Docker Container][ans:docker-container]
+[ans:docker-container]: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html "Ansible Module Documentation: Docker Container"

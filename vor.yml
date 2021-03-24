@@ -19,12 +19,19 @@
         state: present
       loop:
         - python-pip
+        - python-docker
         - python3
         - python3-pip
+        - python3-docker
       tags: ['init','pre','apt']
   roles:
     - { role: geerlingguy.ntp, tags: ['ntp'] }
     - { role: geerlingguy.mysql, tags: ['mysql'] }
+    - { role: geerlingguy.docker, tags: ['docker'] }
+    - role: docker-traefik-proxy
+      tags: ['docker', 'container', 'proxy', 'traefik']
+  # tasks:
+    # - { include_tasks: traefik.yml, tags: ['traefik', 'service'] }
     # - role: marcus-grant.mydotfiles
     #   when: >
     #     ansible_os_family == "Debian" or

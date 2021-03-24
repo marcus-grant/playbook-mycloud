@@ -1,0 +1,31 @@
+---
+# tasks file for docker-traefik-proxy
+- name: >
+    'Set Docker net {{ docker_socket_proxy_network }} for proxied containers'
+  community.docker.docker_network:
+    name: '{{ docker_socket_proxy_network }}'
+
+- name: Docker Socket Proxy Container
+  community.docker.docker_container:
+    name: dock-sock-prox
+    state: started
+    container_default_behavior: compatibility
+    restart_policy: unless-stopped
+    image: '{{ docker_socket_proxy_image }}'
+    network_mode: '{{ docker_socket_proxy_network }}'
+    # networks:
+    #   - name: '{{ docker_socket_proxy_network }}'
+    ports:
+      - '{{ docker_socket_proxy_port }}:2375'
+    volumes:
+      - '{{ docker_socket_mapped_path }}:/var/run/docker.sock'
+  register: varDockSockProx
+
+- name: Restart docker container dock-sock-prox due to change detected
+  community.docker.docker_container:
+    name: dock-sock-prox
+    container_default_behavior: compatibility
+    restart: true
+  when: varDockSockProx.changed
+
+# - name: 

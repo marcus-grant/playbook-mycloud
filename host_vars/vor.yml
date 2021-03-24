@@ -1,4 +1,8 @@
 # General variables
+
+# Ansible Settings
+ansible_python_interpreter: auto
+
 # time_zone: America/New_York
 time_zone: Europe/Stockholm
 admin_user: '{{ vault_admin_user }}'
@@ -28,6 +32,40 @@ mysql_packages:  # This sets up mariaDB as the MySQL replacement
   - mariadb-server
   - python3-mysqldb
   - python-mysqldb
+
+
+### General Settings
+# Use this to enable or disable admin user access, forcing sudo & root
+docker_group_admin_user: false  # disable docker group access for admin
+docker_edition: 'ce'  # ce or ee
+docker_home: /mnt/docker
+# docker_image_directory: '{{ docker_home }}/images'
+docker_storage_driver: overlay2
+docker_package_state: latest  # present, absent, or latest
+docker_service_state: started  # (started) | stopped *
+docker_service_enabled: true  # (yes/true) | no/false *
+docker_restart_handler_state: restarted  # what to do with service after role
+docker_install_compose: true  # (true) | false
+docker_compose_path: /usr/local/bin/docker-compose  # path to compose bin
+docker_socket_mapped_path: /var/run/docker.sock
+
+### Docker Socket Proxy
+docker_socket_proxy_network: traefik
+docker_socket_proxy_port: '2375'
+docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
+
+
+### Traefik
+traefik_enabled: true
+traefik_api_url: 'traefik.{{ base_domain }}'
+traefik_admin_email: '{{ vault_admin_email }}'
+traefik_admin_encrypted_passwd: '{{ vault_traefik_admin_encrypted_passwd }}'
+traefik_dir: '{{ docker_home }}/traefik'
+traefik_api_port: '8080'
+traefik_docker_networks:
+  - default
+  - traefik
+
 
 
 ### Installer Role (Context-Less Program Installs)

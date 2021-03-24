@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include docker-traefik-proxy"
+      include_role:
+        name: "docker-traefik-proxy"

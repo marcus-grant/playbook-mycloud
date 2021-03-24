@@ -1,0 +1,8 @@
+---
+# defaults file for docker-traefik-proxy
+docker_socket_proxy_network: traefik
+docker_socket_proxy_port: '2375'
+docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
+
+# General docker settings
+docker_socket_mapped_path: /var/run/docker.sock
