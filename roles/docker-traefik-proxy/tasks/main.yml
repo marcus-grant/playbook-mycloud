@@ -21,11 +21,22 @@
       - '{{ docker_socket_mapped_path }}:/var/run/docker.sock'
   register: varDockSockProx
 
-- name: Restart docker container dock-sock-prox due to change detected
+- name: Restart docker container dock-sock-prox when its task changes it
   community.docker.docker_container:
     name: dock-sock-prox
     container_default_behavior: compatibility
     restart: true
   when: varDockSockProx.changed
 
-# - name: 
+- name: Create traefik's docker volume
+  community.docker.docker_volume:
+    name: traefik
+
+- name: Send templated traefik.toml & traefik_dynamic.toml config files
+  ansible.builtin.template:
+    src: '{{ item }}.j2'
+    dest: '/var/lib/docker/volumes/traefik/_data/{{ item }}'
+    owner: root
+    group: docker
+    mode: '0600'
+  loop: ['traefik.toml', 'traefik_dynamic.toml']
