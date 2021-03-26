@@ -639,7 +639,7 @@ This set up will be done through an individual ansible role since it has a lot o
 
 ### Set Up Docker Socket Proxy Tasks
 
-For this task ansible will use an ansible module called [docker_network][ans:docker-network] which helps ansible setup discrete networks within docker. This is needed to segregate which networks get access to the docker socket, through the `docker-socket-proxy` container. The proxy container will be placed only inside this segregated network, seperate from Docker's default `bridge` network. Everything else we want to be publicly accessible will just go into the default network.
+For this task ansible will use an ansible module called [docker_network][ansible:docker-network] which helps ansible setup discrete networks within docker. This is needed to segregate which networks get access to the docker socket, through the `docker-socket-proxy` container. The proxy container will be placed only inside this segregated network, seperate from Docker's default `bridge` network. Everything else we want to be publicly accessible will just go into the default network.
 
 Open up the role's `main.yml` task in `roles/docker-traefik-proxy`. Then add these lines:
 
@@ -668,7 +668,7 @@ docker_socket_mapped_path: /var/run/docker.sock
 
 As can be seen, theres some more variables there than the one the first task will be looking for. In `docker_socket_proxy` is the value `proxy` which is the name of the segregated network `docker-socket-proxy` will be in. There's also a variable for the port docker will be looking for in the external network (on the computer docker is installed on) to route traffic to the proxy. In this case it will just be set to the default the container looks for `2375`. Then is a variable to set the name of the proxy Docker container to pull from Docker's hub. The only value that might want to be changed is what comes after `:` if you want a specific version of this container, otherwise `latest` is a good default to always pull the latest version. Then finally is variable for the path to the docker socket, the default value is the one docker uses by default, leave it.
 
-Now that there's default variables for all future settings of this role let's continue with defining the main tasks within the role, let's add in a task that uses Ansible's [docker-container][ans:docker-container] module. Go back to `./roles/docker-traefik-proxy/tasks/main.yml` and add this task.
+Now that there's default variables for all future settings of this role let's continue with defining the main tasks within the role, let's add in a task that uses Ansible's [docker-container][ansible:docker-container] module. Go back to `./roles/docker-traefik-proxy/tasks/main.yml` and add this task.
 
 ```yml
 - name: Docker Socket Proxy Container
@@ -709,7 +709,50 @@ There's two tasks, one to download, configure then run the container, and one to
 - `when`: Is an Ansible option to only run the task when a condition is met, in this case the registered variable which holds the property `changed` indicating that something changed in the task where it was registered.
 
 
+### Setup Traefik to Listen to the Proxy
 
+One of the great features of Traefik is that it works with several built in and community extensible `providers` that allows it to dynamically route URLs based off the programs it listens to. In this case it listens to Docker's socket where it will check on labels given to containers to configure itself to route to them. First though traefik needs to be configured.
+
+For this Ansible's [template][ansible:template] module is terrific. It uses the Jinja templating syntax along with Ansible's variables to create files that change according to those variables. There's a lot to reason through with this configuration that could be its own article, so for more information please read Traefik's [Quick Start][traefik-quick] guide and its following documentation. For now, just stick to the templated TOML file below and adding it to the `docker-traefik-proxy` role's directory in `./roles/docker-traefik-proxy/templates/traefik.toml.j2`.
+
+```j2
+defaultEntryPoints = ["http", "https"]
+
+[entryPoints]
+  [entryPoints.dashboard]
+    address = ":{{ traefik_api_port }}"
+    [entryPoints.dashboard.auth]
+      [entryPoints.dashboard.auth.basic]
+        users = ["{{ traefik_admin_encrypted_passwd }}"]
+  [entryPoints.http]
+    address = ":80"
+      [entryPoints.http.redirect]
+        entryPoint = "https"
+  [entryPoints.https]
+    address = ":443"
+      [entryPoints.https.tls]
+
+[api]
+entrypoint="dashboard"
+
+[acme]
+email = "{{ traefik_admin_email }}"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+  [acme.httpChallenge]
+    entryPoint = "http"
+
+[docker]
+domain = "{{ base_domain }}"
+endpoint = "unix:///var/run/docker.sock"
+watch = true
+```
+
+**FILL IN AN OVERVIEW HERE FOCUSING ON THE VARS AND DOCKER SECTION**
+**ALSO GO BACK AND CHANGE DOCKER NETWORK NAME FOR PROXY TO PROXY**
+
+With the template made, create a Docker volume that can be used be used to store the various configuration files to be inserted into the container at runtime. Ansible has yet another module for this, [docker_volume][ansible:docker-volume].
 
 
 ## References
@@ -754,7 +797,10 @@ There's two tasks, one to download, configure then run the container, and one to
 [ssdnodes-init-playbook]: https://blog.ssdnodes.com/blog/secure-ansible-playbook/ "SSDNodes Tutorials: Remote Server Hardening Initial Ansible Play"
 - [Github: Tecnativa/docker-socket-proxy][dock-sock-prox]
 [dock-sock-prox]: https://github.com/Tecnativa/docker-socket-proxy "Github: Tecnativa/docker-socket-proxy"
-- [Ansible Module Documentation: Docker Network][ans:docker-network]
-[ans:docker-network]: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_network_module.html#ansible-collections-community-docker-docker-network-module "Ansible Module Documentation: Docker Network"
-- [Ansible Module Documentation: Docker Container][ans:docker-container]
-[ans:docker-container]: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html "Ansible Module Documentation: Docker Container"
+- [Ansible Module Documentation: Docker Network][ansible:docker-network]
+[ansible:docker-network]: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_network_module.html#ansible-collections-community-docker-docker-network-module "Ansible Module Documentation: Docker Network"
+- [Ansible Module Documentation: Docker Container][ansible:docker-container]
+[ansible:docker-container]: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html "Ansible Module Documentation: Docker Container"
+- [Traefik Documentation: Quick Start][traefik-quick]
+[traefik-quick]: https://doc.traefik.io/traefik/getting-started/quick-start/ "Traefik Documentation: Quick Start"
+[ansible:template]: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html "Ansible Documentation: Template Module"
