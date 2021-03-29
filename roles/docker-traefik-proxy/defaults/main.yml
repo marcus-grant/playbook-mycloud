@@ -1,8 +1,18 @@
 ---
 # defaults file for docker-traefik-proxy
-docker_socket_proxy_network: traefik
+docker_socket_proxy_enabled: true
+docker_socket_proxy_network: socket-proxy
 docker_socket_proxy_port: '2375'
 docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
+docker_socket_proxy_name: socket-proxy
 
-# General docker settings
-docker_socket_mapped_path: /var/run/docker.sock
+# Traefik settings
+traefik_staging_enabled: false
+traefik_http_port: 80
+traefik_https_port: 443
+traefik_dir: /var/lib/docker/volumes/traefik
+traefik_data_dir: '{{ traefik_data_dir }}/_data'
+traefik_api_port: '8080'
+treafik_image: traefik:latest
+traefik_public_network: default
+traefik_open_dashboard_port: true

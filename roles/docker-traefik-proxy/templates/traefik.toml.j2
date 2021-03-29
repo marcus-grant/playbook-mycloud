@@ -15,11 +15,21 @@ defaultEntryPoints = ["http", "https"]
 [certificatesResolvers.lets-encrypt.acme]
   email = "{{ traefik_admin_email }}"
   storage = "acme.json"
+{% if traefik_staging_enabled %}
+  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+{% endif %}
   [certificatesResolvers.lets-encrypt.acme.tlsChallenge]
 
 [providers.docker]
+  exposedByDefault = false
   watch = true
-  network = "{{ traefik_docker_networks[0] }}"
+{% if docker_socket_proxy_enabled %}
+  network = "{{ docker_socket_proxy_network }}"
+  endpoint = "tcp://{{docker_socket_proxy_name}}:{{docker_socket_proxy_port}}"
+{% else %}
+  network = "{{ traefik_public_network }}"
+  endpoint = "unix:///var/run/docker.sock"
+{% endif %}
 
 [providers.file]
   filename = "traefik_dynamic.toml"

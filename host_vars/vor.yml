@@ -50,25 +50,29 @@ docker_service_enabled: true  # (yes/true) | no/false *
 docker_restart_handler_state: restarted  # what to do with service after role
 docker_install_compose: true  # (true) | false
 docker_compose_path: /usr/local/bin/docker-compose  # path to compose bin
-docker_socket_mapped_path: /var/run/docker.sock
+docker_default_network: www
 
 ### Docker Socket Proxy
-docker_socket_proxy_network: traefik
+docker_socket_proxy_enabled: false
+docker_socket_proxy_name: socket-proxy
+docker_socket_proxy_network: socket-proxy
 docker_socket_proxy_port: '2375'
 docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 
 
 ### Traefik
-traefik_enabled: true
+traefik_staging_enabled: true
 traefik_api_url: 'traefik.{{ base_domain }}'
 traefik_api_port: '8880'
 traefik_admin_email: '{{ vault_admin_email }}'
-traefik_admin_htpasswd: '{{ vault_traefik_admin_encrypted_passwd }}'
-traefik_dir: '{{ docker_home }}/traefik'
-traefik_docker_networks: # The first should be the default
-  - bridge
-  - traefik
-
+traefik_admin_htpasswd: '{{ vault_traefik_admin_htpasswd }}'
+traefik_image: traefik:2.4.8
+# These are merely the default location pointing to the tasks--
+# named volume 'traefik' in the default /var/lib/docker/volumes location.
+traefik_volume_dir: /var/lib/docker/volumes/traefik
+traefik_data_dir: '{{ traefik_volume_dir }}/_data'
+traefik_public_network: '{{ docker_default_network }}'
+traefik_open_dashboard_port: true
 
 
 ### Installer Role (Context-Less Program Installs)

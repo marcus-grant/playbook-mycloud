@@ -1,12 +1,10 @@
 [http.middlewares.simpleAuth.basicAuth]
-  users = [
-    "{{ traefik_admin_htpasswd }}"
-  ]
+  users = ["{{ traefik_admin_htpasswd }}"]
 
 [http.routers.api]
-  rule = "Host(`{{ traefik_api_url }}`)"
+  rule = "Host(`{{traefik_api_url}}`)"
   entrypoints = ["websecure"]
-  middlewares = ["simlpeAuth"]
+  middlewares = ["simpleAuth"]
   service = "api@internal"
   [http.routers.api.tls]
     certResolver = "lets-encrypt"
