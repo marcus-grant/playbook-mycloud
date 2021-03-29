@@ -77,19 +77,19 @@ traefik_open_dashboard_port: true
 
 ### Installer Role (Context-Less Program Installs)
 installer_packages:
-  - {method: apt, name: openssl}
-  - {method: apt, name: unzip}
-  - {method: apt, name: git}
-  - {method: apt, name: vim}
-  - {method: apt, name: tmux}
-  - {method: apt, name: fzf}
-  - {method: apt, name: fd-find}
-  - {method: apt, name: ripgrep}
-  - {method: apt, name: tree}
-  - {method: apt, name: ranger}
-  - {method: apt, name: ncdu}
-  - {method: apt, name: htop}
-  - {method: apt, name: iotop}
+  - { method: apt, name: openssl }
+  - { method: apt, name: unzip }
+  - { method: apt, name: git }
+  - { method: apt, name: vim }
+  - { method: apt, name: tmux }
+  - { method: apt, name: fzf }
+  - { method: apt, name: fd-find }
+  - { method: apt, name: ripgrep }
+  - { method: apt, name: tree }
+  - { method: apt, name: ranger }
+  - { method: apt, name: ncdu }
+  - { method: apt, name: htop }
+  - { method: apt, name: iotop }
 
 
 ### Dotfiles
