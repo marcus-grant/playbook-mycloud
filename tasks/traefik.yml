@@ -1,5 +1,5 @@
 ---
-- name: traefik directories present
+- name: Create traefik directory
   file:
     path: '{{ item }}'
     state: directory
@@ -17,9 +17,9 @@
     image: '{{ traefik_docker_image }}'
     pull: true
     ports:
-      - "{{ traefik_http_port }}:80"
-      - "{{ traefik_https_port }}:443"
-      - "{{ traefik_admin_port }}:8080"
+      - "{{ traefik_http_port | default('80') }}:80"
+      - "{{ traefik_https_port | default('443') }}:443"
+      - "{{ traefik_admin_port  | default('8080') }}:8080"
     volumes:
       - "{{ traefik_data_directory }}/traefik.toml:/etc/traefik/traefik.toml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
