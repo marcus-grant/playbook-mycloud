@@ -25,8 +25,11 @@
         - python3-docker
       tags: ['init','pre','apt']
   roles:
-    - { role: geerlingguy.ntp, tags: ['ntp'] }
-    - { role: geerlingguy.mysql, tags: ['mysql'] }
-    - { role: geerlingguy.docker, tags: ['docker'] }
+    - role: geerlingguy.ntp
+      tags: ['ntp']
+    - role: geerlingguy.mysql
+      tags: ['mysql']
+    - role: geerlingguy.docker
+      tags: ['docker']
     - role: docker-traefik-proxy
       tags: ['docker', 'container', 'proxy', 'traefik']
