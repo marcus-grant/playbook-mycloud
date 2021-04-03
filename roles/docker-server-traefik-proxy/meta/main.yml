@@ -28,13 +28,15 @@ galaxy_info:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
   platforms:
-    - name: Ubuntu
-      - '20.04'
-      - '20.10'
-      - '21.04'
-    - name: Debian
-      - '10'
-      - '11'
+    - name: ubuntu
+      versions:
+        - '20.04'
+        - '20.10'
+        - '21.04'
+    - name: debian
+      versions:
+        - '10'
+        - '11'
 
   galaxy_tags: ['docker', 'traefik', 'socket-proxy', 'socket', 'proxy', 'server', 'self-hosted']
     # List tags for your role here, one per line. A tag is a keyword that describes
