@@ -40,5 +40,5 @@
       tags: ['mysql']
     - role: geerlingguy.docker
       tags: ['docker']
-    - role: docker-traefik-proxy
+    - role: docker-server-traefik-proxy
       tags: ['docker', 'container', 'proxy', 'traefik']
