@@ -1,7 +1,7 @@
-Role Name
-=========
+role-docker-server-traefik-proxy
+================================
 
-A brief description of the role goes here.
+An Ansible role that is used to setup a single host docker server that makes use of `tecnativa/docker-socket-proxy` to prevent arbitrary access to Docker's socket, giving privelege escalation and possibilities for arbitrary code execution as root. It then installs Traefik to manage routing, certificate signing and proxying to all Docker containers, and will use the socket proxy to prevent a comprimised Traefik from being given able to escalate its priveleges to do bad things as root. And because this sets up a complete Docker server environment, it also will have a growing list of tasks to install specific containers with specific dictionary variables to set them up with all required configs.
 
 Requirements
 ------------
