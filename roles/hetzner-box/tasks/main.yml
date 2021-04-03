@@ -51,16 +51,6 @@
     cmd: 'cat /root/.ssh/{{ hbox_ssh_key_name }}.pub >> /root/.ssh/hbox_authorized_keys && cat /root/.ssh/{{ hbox_ssh_key_name}}_rfc.pub >> /root/.ssh/hbox_authorized_keys'
     creates: /root/.ssh/hbox_authorized_keys
 
-# TODO Get this working and remove the explicit template file task
-# - name: Add storage box host to ssh config
-#   community.general.ssh_config:
-#     host: hbox
-#     user: '{{ hbox_remote_user }}'
-#     hostname: '{{ hbox_remote_user }}.your-storagebox.de'
-#     identity_file: '/root/.ssh/{{ hbox_ssh_key_name }}'
-#     port: '22'
-#     state: present
-
 - name: "Check if root's ssh config file exists"
   stat:
     path: '/root/.ssh/config'
