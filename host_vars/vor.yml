@@ -13,7 +13,6 @@ admin_user: '{{ vault_admin_user }}'
 # Hbox Configs
 hbox_ssh_key_name: '{{ vault_hbox_ssh_key_name }}'
 hbox_remote_user: '{{ vault_boks_user }}'
-hbox_url: '{{ vault_boks_url }}'
 hbox_mount_point: /mnt/hbox
 
 ### NTP Settings
