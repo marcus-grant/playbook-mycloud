@@ -1,0 +1,122 @@
+---
+# TODO make this work on any arbitrary user
+- name: "Ensure root's .ssh directory exists"
+  file:
+    path: /root/.ssh
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Check that SSH authorized_keys file exists 
+  stat:
+    path: /root/.ssh/authorized_keys
+  register: root_auth_keys
+
+- name: Touch root SSH authorized_keys file if it doesn't exist
+  file:
+    path: /root/.ssh/authorized_keys
+    state: touch
+  when: not root_auth_keys.stat.exists
+
+- name: Generate SSH key-pair for storage box
+  community.crypto.openssh_keypair:
+    path: '/root/.ssh/{{ hbox_ssh_key_name }}'
+    size: 4096
+    force: '{{ hbox_force_new_key }}'
+    comment: '{{ hbox_local_user }}@{{ ansible_hostname }}'
+
+- name: Check if RFC4716 foramtted version of pub-key exists
+  stat:
+    path: '/root/.ssh/{{ hbox_ssh_key_name }}_rfc.pub'
+  register: rfc_pubkey
+
+- name: 'Check if hbox authorized keys file exists'
+  stat:
+    path: '/root/.ssh/hbox_authorized_keys'
+  register: hbox_authorized_keys
+
+- name: Create an RFC4716 formatted copy of the pub-key
+  shell:
+    cmd: 'ssh-keygen -e -f /root/.ssh/{{ hbox_ssh_key_name }}.pub | grep -v {{ "Comment:"|quote }} > /root/.ssh/{{ hbox_ssh_key_name }}_rfc.pub'
+    creates: '/root/.ssh/{{ hbox_ssh_key_name }}_rfc.pub'
+
+- name: Check if hbox authorized keys file exists
+  stat:
+    path: '/root/.ssh/hbox_authorized_keys'
+  register: hbox_authorized_keys
+
+- name: 'Append both pub-keys to the authorized keys file'
+  shell:
+    cmd: 'cat /root/.ssh/{{ hbox_ssh_key_name }}.pub >> /root/.ssh/hbox_authorized_keys && cat /root/.ssh/{{ hbox_ssh_key_name}}_rfc.pub >> /root/.ssh/hbox_authorized_keys'
+    creates: /root/.ssh/hbox_authorized_keys
+
+# TODO Get this working and remove the explicit template file task
+# - name: Add storage box host to ssh config
+#   community.general.ssh_config:
+#     host: hbox
+#     user: '{{ hbox_remote_user }}'
+#     hostname: '{{ hbox_remote_user }}.your-storagebox.de'
+#     identity_file: '/root/.ssh/{{ hbox_ssh_key_name }}'
+#     port: '22'
+#     state: present
+
+- name: "Check if root's ssh config file exists"
+  stat:
+    path: '/root/.ssh/config'
+  register: ssh_root_config_file
+
+- name: "Create root's ssh config file if it doesn't exist"
+  file:
+    state: touch
+    path: '/root/.ssh/config'
+    owner: root
+    group: root
+    mode: '0600'
+  when: not ssh_root_config_file.stat.exists
+
+- name: "Template root's ssh config file to use new storage box"
+  blockinfile:
+    dest: /root/.ssh/config
+    block: "{{ lookup('template', 'ssh_config.j2') }}"
+    marker: "# {mark} ansible managed SSH host entry for hetzner box"
+
+- name: 'Template a script to use to push authorized keys to storage box'
+  template:
+    src: 'push_authorized_keys.sh.j2'
+    dest: '/root/.ssh/push_authorized_keys.sh'
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Install SSHFS
+  apt:
+    name: 'sshfs'
+    state: present
+
+- name: Ensure local mount point exists
+  file:
+    state: directory
+    path: '/mnt/hbox'
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Ensure storage box is mounted via SSHFS
+  ansible.posix.mount:
+    src: '{{ hbox_remote_user }}@{{ hbox_remote_user }}.your-storagebox.de:/'
+    path: '{{ hbox_mount_point }}'
+    fstype: fuse.sshfs
+    state: mounted
+    opts: 'defaults,allow_other,reconnect,_netdev,idmap=user,follow_symlinks,uid=0,gid=0,identityfile=/root/.ssh/hbox_id_rsa'
+  
+- name: Check if storage box mount is empty to know if explicit mounting needed
+  find:
+    paths: '/mnt/hbox/'
+    depth: 1
+  register: hbox_files
+
+- name: Mount storage box if its mount point is empty
+  command: mount -a
+  when: hbox_files.examined < 1 
+

@@ -21,12 +21,21 @@
         - python-pip
         - python-docker
         - python3
+        - python3-setuptools
         - python3-pip
         - python3-docker
       tags: ['init','pre','apt']
+    - name: Install some pip packages
+      pip:
+        name: '{{ item }}'
+      loop:
+        - stormssh
+      tags: ['init', 'pre', 'pip']
   roles:
     - role: geerlingguy.ntp
       tags: ['ntp']
+    - role: hetzner-box
+      tags: ['box', 'hbox', 'storage', 'hetzner']
     - role: geerlingguy.mysql
       tags: ['mysql']
     - role: geerlingguy.docker

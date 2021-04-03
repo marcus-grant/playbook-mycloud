@@ -1,0 +1,8 @@
+# This script is templated by Ansible as a helper
+# to push authorized keys to a remote Hetzner Storage box
+echo -e \
+"mkdir .ssh
+chmod 700 .ssh
+put /root/.ssh/hbox_authorized_keys /.ssh/authorized_keys
+chmod 600 .ssh/authorized_keys" \
+| sftp {{ hbox_remote_user }}@{{ hbox_remote_user }}.your-storagebox.de

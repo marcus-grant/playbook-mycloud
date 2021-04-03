@@ -1,0 +1,5 @@
+Host hbox
+    User            {{ hbox_remote_user }}
+    HostName        {{ hbox_remote_user }}.your-storagebox.de
+    Port            22
+    IdentityFile    /root/.ssh/{{ hbox_ssh_key_name }}

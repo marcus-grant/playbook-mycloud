@@ -1,0 +1,6 @@
+---
+# defaults file for hetzner-box
+hbox_ssh_key_name: hbox_id_rsa
+hbox_local_user: root
+hbox_force_new_key: false
+hbox_mount_point: /mnt/hbox
