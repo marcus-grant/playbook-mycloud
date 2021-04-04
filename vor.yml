@@ -41,4 +41,4 @@
     - role: geerlingguy.docker
       tags: ['docker']
     - role: docker-server-traefik-proxy
-      tags: ['docker', 'container', 'proxy', 'traefik', 'git', 'gitea']
+      tags: ['docker', 'container', 'docker_containers', 'proxy', 'traefik', 'git', 'gitea']
