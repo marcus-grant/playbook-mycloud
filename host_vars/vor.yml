@@ -80,6 +80,9 @@ traefik_data_dir: '{{ traefik_volume_dir }}/_data'
 traefik_public_network: '{{ docker_default_network }}'
 traefik_open_dashboard_port: true
 
+### Git/Gitea
+gitea_enabled: true
+git_gid: 10002
 
 ### Installer Role (Context-Less Program Installs)
 installer_packages:
