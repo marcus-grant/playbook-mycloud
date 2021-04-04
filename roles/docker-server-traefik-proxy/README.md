@@ -11,7 +11,16 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- `gitea_enabled`: Defaults to false. Determines if gitea container will be setup.
+- `git_group`: Defaults to `git`. The name for the git group the gitea container will use.
+- `git_gid`: Defaults to omission. Sets the group id of the git user.
+  - If omitted, then it will simply use the OS default for groups which typically involves finding the next availble ID from a range. In linux userspace IDs typically start at 1000, so after installing a main admin user on linux, that user is typically 1000, the next availble ID is then 1001.
+- `git_user`: Defaults to `git`. The OS username that the gitea service will use.
+- `git_uid`: Defaults to omission. Sets the User ID of the `git_user`.
+  - Omission has the same effect as in `git_gid`.
+- `git_passwd`: Required. Sets the password to switch to the `git_user`.
+  - It's advisable to use an ansible vault to set this value or to inject it through `extra-vars` arguments.
+- `git_home`: Defaults to `/home/git`. Sets the home directory of the `git_user`.
 
 Dependencies
 ------------
