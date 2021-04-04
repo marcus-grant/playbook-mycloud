@@ -66,6 +66,7 @@ docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 
 
 ### Traefik
+traefik_setup: true
 traefik_staging_enabled: true
 traefik_api_url: 'traefik.{{ base_domain }}'
 traefik_api_port: '8880'

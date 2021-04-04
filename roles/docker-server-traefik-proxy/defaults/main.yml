@@ -7,6 +7,7 @@ docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 docker_socket_proxy_name: socket-proxy
 
 # Traefik settings
+traefik_setup: true
 traefik_staging_enabled: false
 traefik_http_port: 80
 traefik_https_port: 443

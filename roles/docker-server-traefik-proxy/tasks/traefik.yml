@@ -1,0 +1,160 @@
+---
+# Tasks to setup traefik to be run on single host docker server
+- name: Set Docker network for publicly accessed containers, routed by traefik
+  community.docker.docker_network:
+    name: '{{ traefik_public_network }}'
+
+- name: Set Docker network proxy for socket proxies
+  community.docker.docker_network:
+    name: '{{ docker_socket_proxy_network }}'
+    internal: true
+  when: docker_socket_proxy_enabled
+
+- name: Docker Socket Proxy Container
+  community.docker.docker_container:
+    name: '{{ docker_socket_proxy_name }}'
+    image: '{{ docker_socket_proxy_image }}'
+    state: started
+    container_default_behavior: compatibility
+    privileged: true
+    restart_policy: unless-stopped
+    network_mode: '{{ docker_socket_proxy_network }}'
+    ports:
+      - '127.0.0.1:{{ docker_socket_proxy_port }}:2375'
+    env:
+      CONTAINERS: '1'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+  register: varDockSockProx
+  when: docker_socket_proxy_enabled
+
+- name: Restart docker container dock-sock-prox when its task changes it
+  community.docker.docker_container:
+    name: docker-socket-proxy
+    container_default_behavior: compatibility
+    restart: true
+  when: varDockSockProx.changed and docker_socket_proxy_enabled
+
+- name: Create traefik's docker volume
+  community.docker.docker_volume:
+    name: traefik
+
+# - name: Send templated traefik.toml & traefik_dynamic.toml config files
+#   ansible.builtin.template:
+#     src: '{{ item }}.j2'
+#     dest: '{{ traefik_data_dir }}/{{ item }}'
+#     owner: root
+#     group: docker
+#     mode: '0600'
+#   loop: ['traefik.toml', 'traefik_dynamic.toml']
+
+- name: Create empty file acme.json for traefik to store certificates
+  ansible.builtin.copy:
+    content: ""
+    dest: '{{ traefik_data_dir }}/acme.json'
+    owner: root
+    group: docker
+    mode: '600'
+    force: false
+
+- name: Traefik Docker Container
+  vars:
+    le_staging: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+    le_production: 'https://acme-v02.api.letsencrypt.org/directory'
+    le_ca_url: '{{ le_staging if traefik_staging_enabled else le_production }}'
+  community.docker.docker_container:
+    name: 'traefik'
+    state: 'started'
+    container_default_behavior: 'compatibility'
+    restart_policy: 'unless-stopped'
+    image: '{{ traefik_image }}'
+    network_mode: 'bridge'
+    networks: 
+      - name: '{{ traefik_public_network }}'
+    ports:
+      - "{{ traefik_http_port | default('80') }}:80"
+      - "{{ traefik_https_port | default('443') }}:443"
+      - "{{ traefik_admin_port | default('8080')}}:8080"
+    volumes:
+      - '{{ traefik_data_dir }}/acme.json:/acme.json'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - '--certificatesresolvers.le.acme.email={{traefik_admin_email}}'
+      - --certificatesresolvers.le.acme.storage=/acme.json
+      - "--log.level={{'DEBUG' if traefik_staging_enabled else 'ERROR'}}"
+      - '--certificatesresolvers.le.acme.caserver={{ le_ca_url }}'
+    labels:
+      # Global redirect to HTTPS from HTTP
+      traefik.http.routers.http-catchall.rule: 'hostregexp(`{host:.+}`)'
+      traefik.http.routers.http-catchall.entrypoints: 'web'
+      traefik.http.routers.http-catchall.middlewares: 'to-https'
+      # Middleware redirect
+      traefik.http.middlewares.to-https.redirectscheme.scheme: 'https'
+
+- name: Docker container whoami for testing
+  community.docker.docker_container:
+    name: whoami
+    image: 'containous/whoami:v1.3.0'
+    state: started
+    container_default_behavior: compatibility
+    restart_policy: unless-stopped
+    network_mode: '{{ traefik_public_network }}'
+    networks:
+      - name: '{{ traefik_public_network }}'
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.whoami.rule: 'Host(`whoami.{{base_domain}}`)'
+      traefik.http.routers.whoami.entrypoints: websecure
+      traefik.http.routers.whoami.tls.certresolver: le
+
+# - name: Traefik Docker Container
+#   # vars:
+#   #   trvols:
+#   #     - '{{ traefik_data_dir }}/traefik.toml:/traefik.toml'
+#   #     - '{{ traefik_data_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml'
+#   #     - '{{ traefik_data_dir }}/acme.json:/acme.json'
+#   #   sockvol: '/var/run/docker.sock:/var/run/docker.sock:ro'
+#   #   pubnet: ['{{ traefik_public_network }}']
+#   #   socknet: '{{ docker_socket_proxy_network }}'
+#   #   traefikenv:
+#   #     DOCKER_HOST: >
+#   #       'tcp://{{ docker_socket_proxy_name }}:{{ docker_socket_proxy_port }}'
+#   community.docker.docker_container:
+#     name: traefik
+#     state: started
+#     container_default_behavior: compatibility
+#     restart_policy: unless-stopped
+#     image: '{{ traefik_image }}'
+#     # network_mode: bridge
+#     network_mode: '{{ traefik_public_network }}'
+#     # networks: "{{ pubnet + [socknet] if docker_socket_proxy_enabled else pubnet }}"
+#     # networks:
+#     #   - name: '{{ traefik_public_network }}'
+#     #   - name: '{{ docker_socket_proxy_network }}'
+#     ports:
+#       - "{{ traefik_http_port | default('80') }}:80"
+#       - "{{ traefik_https_port | default('443') }}:443"
+#       - "{{ traefik_admin_port | default('8080')}}:8080"
+#     # env:
+#     # # '{{ traefikenv if docker_socket_proxy_enabled else none }}'
+#     #   DOCKER_HOST: >
+#     #     'tcp://{{ docker_socket_proxy_name }}:{{ docker_socket_proxy_port }}'
+#     # volumes: "{{ trvols + [sockvol] if docker_socket_proxy_enabled else trvols }}"
+#     volumes:
+#       - '{{ traefik_data_dir }}/traefik.toml:/traefik.toml'
+#       - '{{ traefik_data_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml'
+#       - '{{ traefik_data_dir }}/acme.json:/acme.json'
+#       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+#   register: varTraefik
+
+# - name: Restart docker container traefik when its task changes
+#   community.docker.docker_container:
+#     name: traefik
+#     container_default_behavior: compatibility
+#     restart: true
+#   when: varTraefik.changed
