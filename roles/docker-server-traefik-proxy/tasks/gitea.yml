@@ -1,4 +1,5 @@
 ---
-- name: Hello
-  debug:
-    msg: "Hello World! We're in the gitea task file."
+  - name: Create group git
+    group:
+      name: '{{ git_group }}'
+      gid: '{{ git_gid | default(omit) }}'
