@@ -20,3 +20,5 @@ traefik_open_dashboard_port: true
 
 # Git/Gitea
 git_group: git
+git_user: git
+git_home: /home/git
