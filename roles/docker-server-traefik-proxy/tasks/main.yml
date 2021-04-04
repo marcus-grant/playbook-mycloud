@@ -6,4 +6,4 @@
 
 - name: Include gitea setup tasks
   include_tasks: gitea.yml
-  when: gitea_enabled | default('false')
+  when: gitea_enabled | default(false)

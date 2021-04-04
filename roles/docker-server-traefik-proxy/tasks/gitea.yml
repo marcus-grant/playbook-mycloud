@@ -1,5 +1,10 @@
 ---
+- block:
+
   - name: Create group git
     group:
       name: '{{ git_group }}'
       gid: '{{ git_gid | default(omit) }}'
+
+  when: gitea_enabled | default(false)
+  tags: ['git', 'gitea']
