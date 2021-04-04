@@ -83,6 +83,8 @@ traefik_open_dashboard_port: true
 ### Git/Gitea
 gitea_enabled: true
 git_gid: 10002
+git_uid: 10002
+git_user_passwd: '{{ vault_git_user_passwd }}'
 
 ### Installer Role (Context-Less Program Installs)
 installer_packages:
