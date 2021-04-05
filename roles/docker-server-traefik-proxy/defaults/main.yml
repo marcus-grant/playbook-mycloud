@@ -22,3 +22,4 @@ traefik_open_dashboard_port: true
 git_group: git
 git_user: git
 git_home: /home/git
+git_indexer_enable: false

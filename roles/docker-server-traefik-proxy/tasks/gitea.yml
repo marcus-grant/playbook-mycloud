@@ -16,6 +16,19 @@
       update_password: on_create
       password_lock: true
       shell: '/bin/bash'
+  
+  - name: Prepare gitea expected directory structure
+    file:
+      state: directory
+      path: '{{ git_home }}/{{ item.dir }}'
+      owner: '{{ git_user }}'
+      group: '{{ git_group }}'
+      mode: '0750'
+    loop:
+      - { dir: 'data', enable: true }
+      - { dir: 'log', enable: true }
+      - { dir: 'indexers', enable: '{{ git_indexer_enable }}' }
+    when: item.enable
 
   when: gitea_enabled | default(false)
   tags: ['git', 'gitea']
