@@ -21,6 +21,15 @@ Role Variables
 - `git_passwd`: Required. Sets the password to switch to the `git_user`.
   - It's advisable to use an ansible vault to set this value or to inject it through `extra-vars` arguments.
 - `git_home`: Defaults to `/home/git`. Sets the home directory of the `git_user`.
+- `git_indexer_enable`: Defaults to `false`. Enables gitea's indexer feature, including setting up directories and configurations for it.
+
+To-Do's
+-------
+
+- [ ] Add customization folders and configs, with enable vars
+  - [ ] Should probably also include the `public` directory
+- [ ] Preload SSH keys
+- [ ] Fail2ban configuration, with enable vars and descriptions of the dependency
 
 Dependencies
 ------------
