@@ -58,7 +58,7 @@ docker_compose_path: /usr/local/bin/docker-compose  # path to compose bin
 docker_default_network: www
 
 ### Docker Socket Proxy
-docker_socket_proxy_enabled: false
+docker_socket_proxy_enabled: false # TODO: Test this, haven't confirmed it works
 docker_socket_proxy_name: socket-proxy
 docker_socket_proxy_network: socket-proxy
 docker_socket_proxy_port: '2375'
@@ -67,9 +67,7 @@ docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 
 ### Traefik
 traefik_setup: true
-traefik_staging_enabled: false
-traefik_api_url: 'traefik.{{ base_domain }}'
-traefik_api_port: '8880'
+traefik_debug: true
 traefik_api_port: '8880' # Marked for removal if not used in template
 traefik_admin_email: '{{ vault_admin_email }}'
 traefik_admin_htpasswd: '{{ vault_traefik_admin_htpasswd }}'
