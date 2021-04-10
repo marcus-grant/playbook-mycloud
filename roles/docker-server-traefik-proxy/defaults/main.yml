@@ -22,4 +22,8 @@ traefik_open_dashboard_port: true
 git_group: git
 git_user: git
 git_home: /home/git
+git_image_tag: latest
+git_db_image_tag: latest
+git_db_container_enable: true
+git_docker_network: bridge
 git_indexer_enable: false

@@ -27,8 +27,68 @@
     loop:
       - { dir: 'data', enable: true }
       - { dir: 'log', enable: true }
+      - { dir: 'db', enable: '{{ git_db_container_enable }}' }
       - { dir: 'indexers', enable: '{{ git_indexer_enable }}' }
     when: item.enable
+  
+  - name: Gitea PostgreSQL database docker container
+    community.docker.docker_container:
+      name: 'gitea-db'
+      state: 'started'
+      container_default_behavior: 'compatibility'
+      restart_policy: 'unless-stopped'
+      image: 'postgres:{{ git_db_image_tag }}'
+      network_mode: 'bridge'
+      networks:
+        - name: '{{ git_docker_network }}'
+      env:
+        POSTGRES_USER: '{{ git_user }}'
+        POSTGRES_PASSWORD: '{{ git_db_passwd }}'
+        POSTGRES_DB: '{{ git_user }}'
+      volumes:
+        - '{{ git_home }}/db:/var/lib/postgresql/data'
+  
+  - name: Gitea server docker container
+    community.docker.docker_container:
+      name: 'gitea'
+      state: 'started'
+      container_default_behavior: 'compatibility'
+      restart_policy: 'unless-stopped'
+      image: 'gitea/gitea:{{ git_image_tag }}'
+      network_mode: 'bridge'
+      networks:
+        - name: '{{ git_docker_network }}'
+      ports:
+        - '3000:3000'
+        - '222:22'
+      env:
+        USER_UID: '{{ git_uid | string }}'
+        USER_GID: '{{ git_gid | string }}'
+        DB_TYPE: 'postgres'
+        DB_HOST: 'gitea-db:5432'
+        DB_NAME: '{{ git_user }}'
+        DB_USER: '{{ git_user }}'
+        DB_PASSWD: '{{ git_db_passwd }}'
+      volumes:
+        - '{{ git_home }}/data:/data'
+        - '{{ git_home }}/log:/log'
+        - '{{ git_home }}/indexers:/indexers'
+        - '/etc/timezone:/etc/timezone:ro'
+        - '/etc/localtime:/etc/localtime:ro'
+      labels:
+        traefik.enable: 'true'
+        traefik.http.routers.git.entrypoints: 'http'
+        traefik.http.routers.git.rule: 'Host(`git.{{ base_domain }}`)'
+        traefik.http.middlewares.git-https-redirect.redirectscheme.scheme:
+          'https'
+        traefik.http.routers.git.middlewares: 'git-https-redirect'
+        traefik.http.routers.git-secure.entrypoints: 'https'
+        traefik.http.routers.git-secure.rule: 'Host(`git.{{ base_domain }}`)'
+        traefik.http.routers.git-secure.tls: 'true'
+        traefik.http.routers.git-secure.tls.certresolver: 'http'
+        traefik.http.routers.git-secure.service: 'git'
+        traefik.http.services.git.loadbalancer.server.port: '8000'
+        traefik.docker.network: '{{ git_docker_network }}'
 
   when: gitea_enabled | default(false)
   tags: ['git', 'gitea']
