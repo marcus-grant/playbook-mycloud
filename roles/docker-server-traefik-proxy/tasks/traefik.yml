@@ -10,30 +10,30 @@
     internal: true
   when: docker_socket_proxy_enabled
 
-- name: Docker Socket Proxy Container
-  community.docker.docker_container:
-    name: '{{ docker_socket_proxy_name }}'
-    image: '{{ docker_socket_proxy_image }}'
-    state: started
-    container_default_behavior: compatibility
-    privileged: true
-    restart_policy: unless-stopped
-    network_mode: '{{ docker_socket_proxy_network }}'
-    ports:
-      - '127.0.0.1:{{ docker_socket_proxy_port }}:2375'
-    env:
-      CONTAINERS: '1'
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
-  register: varDockSockProx
-  when: docker_socket_proxy_enabled
+# - name: Docker Socket Proxy Container
+#   community.docker.docker_container:
+#     name: '{{ docker_socket_proxy_name }}'
+#     image: '{{ docker_socket_proxy_image }}'
+#     state: started
+#     container_default_behavior: compatibility
+#     privileged: true
+#     restart_policy: unless-stopped
+#     network_mode: '{{ docker_socket_proxy_network }}'
+#     ports:
+#       - '127.0.0.1:{{ docker_socket_proxy_port }}:2375'
+#     env:
+#       CONTAINERS: '1'
+#     volumes:
+#       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+#   register: varDockSockProx
+#   when: docker_socket_proxy_enabled
 
-- name: Restart docker container dock-sock-prox when its task changes it
-  community.docker.docker_container:
-    name: docker-socket-proxy
-    container_default_behavior: compatibility
-    restart: true
-  when: varDockSockProx.changed and docker_socket_proxy_enabled
+# - name: Restart docker container dock-sock-prox when its task changes it
+#   community.docker.docker_container:
+#     name: docker-socket-proxy
+#     container_default_behavior: compatibility
+#     restart: true
+#   when: varDockSockProx.changed and docker_socket_proxy_enabled
 
 - name: Create traefik's docker volume
   community.docker.docker_volume:
