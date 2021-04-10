@@ -1,10 +1,19 @@
+# Setup the user/password combos that simpleAuth uses
 [http.middlewares.simpleAuth.basicAuth]
+  # A list of Apache formated hashed user password strings
   users = ["{{ traefik_admin_htpasswd }}"]
 
+# Chains with 'routers' specifies how Traefik routes services
+# Api at the end of the router chain changes how Traefik's API is routed
 [http.routers.api]
-  rule = "Host(`{{traefik_api_url}}`)"
-  entrypoints = ["websecure"]
-  middlewares = ["simpleAuth"]
+  # Set full domain for the API with host match pattern
+  rule = "Host(`traefik.{{ base_domain }}`)"
+  entrypoints = ["websecure"] # Only use websecure entry
+  middlewares = ["simpleAuth"] # Use simpleAuth to authenticate
+  # The next 3 lines configure a 'service'
+  # Enables an internal service (Traefik's own API)
+  # Routes it through TLS & certifies it with 'lets-encrypt'
+  # Other services can explicitly be defined this way
   service = "api@internal"
   [http.routers.api.tls]
     certResolver = "lets-encrypt"

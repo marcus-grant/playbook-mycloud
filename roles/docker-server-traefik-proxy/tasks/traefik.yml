@@ -39,14 +39,17 @@
   community.docker.docker_volume:
     name: traefik
 
-# - name: Send templated traefik.toml & traefik_dynamic.toml config files
-#   ansible.builtin.template:
-#     src: '{{ item }}.j2'
-#     dest: '{{ traefik_data_dir }}/{{ item }}'
-#     owner: root
-#     group: docker
-#     mode: '0600'
-#   loop: ['traefik.toml', 'traefik_dynamic.toml']
+- name: Send templated traefik.toml & traefik_dynamic.toml config files
+  ansible.builtin.template:
+    src: '{{ item }}.j2'
+    dest: '{{ traefik_data_dir }}/{{ item }}'
+    owner: root
+    group: docker
+    mode: '0600'
+  loop:
+    - 'traefik.toml'
+    - 'traefik_dynamic.toml'
+  register: traefikConfigs
 
 - name: Create empty file acme.json for traefik to store certificates
   ansible.builtin.copy:
@@ -58,10 +61,6 @@
     force: false
 
 - name: Traefik Docker Container
-  vars:
-    le_staging: 'https://acme-staging-v02.api.letsencrypt.org/directory'
-    le_production: 'https://acme-v02.api.letsencrypt.org/directory'
-    le_ca_url: '{{ le_staging if traefik_staging_enabled else le_production }}'
   community.docker.docker_container:
     name: 'traefik'
     state: 'started'
@@ -69,32 +68,23 @@
     restart_policy: 'unless-stopped'
     image: '{{ traefik_image }}'
     network_mode: 'bridge'
-    networks: 
+    networks:
       - name: '{{ traefik_public_network }}'
     ports:
       - "{{ traefik_http_port | default('80') }}:80"
       - "{{ traefik_https_port | default('443') }}:443"
       - "{{ traefik_admin_port | default('8080')}}:8080"
     volumes:
-      - '{{ traefik_data_dir }}/acme.json:/acme.json'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-    command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.le.acme.tlschallenge=true
-      - '--certificatesresolvers.le.acme.email={{traefik_admin_email}}'
-      - --certificatesresolvers.le.acme.storage=/acme.json
-      - "--log.level={{'DEBUG' if traefik_staging_enabled else 'ERROR'}}"
-      - '--certificatesresolvers.le.acme.caserver={{ le_ca_url }}'
-    labels:
-      # Global redirect to HTTPS from HTTP
-      traefik.http.routers.http-catchall.rule: 'hostregexp(`{host:.+}`)'
-      traefik.http.routers.http-catchall.entrypoints: 'web'
-      traefik.http.routers.http-catchall.middlewares: 'to-https'
-      # Middleware redirect
-      traefik.http.middlewares.to-https.redirectscheme.scheme: 'https'
+      - '{{ traefik_data_dir }}/traefik.toml:/traefik.toml'
+      - '{{ traefik_data_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml'
+      - '{{ traefik_data_dir }}/acme.json:/acme.json'
+
+- name: Restart Traefik Docker container if configurations changed
+  community.docker.docker_container:
+    name: 'traefik'
+    restart: true
+  when: traefikConfigs.changed
 
 - name: Docker container whoami for testing
   community.docker.docker_container:

@@ -1,26 +1,40 @@
-defaultEntryPoints = ["http", "https"]
-
-[entryPoints]
-  [entryPoints.web]
+[entryPoints] # Define default entrypoints
+  [entryPoints.web] # Port 80 is entrypoint 'web'
     address = ":80"
+    # Tell web to redirect http traffic 'to' 'websecure'
     [entryPoints.web.http.redirections.entryPoint]
       to = "websecure"
-      scheme = "https"
-  [entryPoints.websecure]
-    address = ":443"
+      scheme = "https" # Target https as redirection
 
+  # Define entrypoint named "websecure" the above points to
+  [entryPoints.websecure]
+    address = ":443" # Listen to standard HTTPS port with 'websecure'
+
+# Enable Traefik & Dashboard access by specifying 'api' header
 [api]
   dashboard = true
 
+# Certificate resolvers manage among others TLS certificates
+# 'lets-encrypt' is simply the name for the cert resolver
+# It's set to use 'acme' the protocol LetsEncrypt uses to manage certs
 [certificatesResolvers.lets-encrypt.acme]
+  email = "{{ traefik_admin_email }}" # Email to associate with cert
+  storage = "acme.json" # JSON file location to store ACME info
   email = "{{ traefik_admin_email }}"
   storage = "acme.json"
 {% if traefik_staging_enabled %}
   caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 {% endif %}
+  # Enable TLS challenges as response to cert requests
+  # Note SSL is a misnomer, it's the old protocol, TLS is the norm now
   [certificatesResolvers.lets-encrypt.acme.tlsChallenge]
 
+# Now configure traefik to use docker as a provider to proxy to
 [providers.docker]
+  watch = true # Watch for new containers
+  network = "{{ traefik_public_network }}" # Docker net to use
+  exposedbydefault = false # Should containers be proxied by default?
+
   exposedByDefault = false
   watch = true
 {% if docker_socket_proxy_enabled %}
@@ -31,5 +45,7 @@ defaultEntryPoints = ["http", "https"]
   endpoint = "unix:///var/run/docker.sock"
 {% endif %}
 
+# To work with both static (this config) & dynamic configurations
+# Can't do both in same config file in v2, use file provider to load dynamic
 [providers.file]
   filename = "traefik_dynamic.toml"
