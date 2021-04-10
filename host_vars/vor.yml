@@ -67,7 +67,7 @@ docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 
 ### Traefik
 traefik_setup: true
-traefik_staging_enabled: true
+traefik_staging_enabled: false
 traefik_api_url: 'traefik.{{ base_domain }}'
 traefik_api_port: '8880'
 traefik_admin_email: '{{ vault_admin_email }}'
@@ -85,7 +85,9 @@ gitea_enabled: true
 git_gid: 10002
 git_uid: 10002
 git_user_passwd: '{{ vault_git_user_passwd }}'
+git_db_passwd: '{{ vault_git_db_passwd }}'
 git_indexer_enable: true
+git_docker_network: '{{ traefik_public_network }}'
 
 ### Installer Role (Context-Less Program Installs)
 installer_packages:
