@@ -67,7 +67,9 @@ docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 
 ### Traefik
 traefik_setup: true
-traefik_debug: true
+traefik_staging_enabled: false
+traefik_api_url: 'traefik.{{ base_domain }}'
+traefik_api_port: '8880'
 traefik_api_port: '8880' # Marked for removal if not used in template
 traefik_admin_email: '{{ vault_admin_email }}'
 traefik_admin_htpasswd: '{{ vault_traefik_admin_htpasswd }}'

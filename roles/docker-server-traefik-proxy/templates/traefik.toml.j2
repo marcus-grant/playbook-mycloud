@@ -13,6 +13,8 @@
 # Enable Traefik & Dashboard access by specifying 'api' header
 [api]
   dashboard = true
+  debug = {{ 'true' if traefik_debug else 'false' }}
+  insecure = {{ 'true' if traefik_debug else 'false' }}
 
 # Certificate resolvers manage among others TLS certificates
 # 'lets-encrypt' is simply the name for the cert resolver
@@ -20,11 +22,11 @@
 [certificatesResolvers.lets-encrypt.acme]
   email = "{{ traefik_admin_email }}" # Email to associate with cert
   storage = "acme.json" # JSON file location to store ACME info
-  email = "{{ traefik_admin_email }}"
-  storage = "acme.json"
-{% if traefik_staging_enabled %}
-  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
-{% endif %}
+  {% if traefik_debug %}
+  caserver = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  {% else %}
+  caserver = "https://acme-v02.api.letsencrypt.org/directory"
+  {% endif %}
   # Enable TLS challenges as response to cert requests
   # Note SSL is a misnomer, it's the old protocol, TLS is the norm now
   [certificatesResolvers.lets-encrypt.acme.tlsChallenge]
@@ -35,15 +37,9 @@
   network = "{{ traefik_public_network }}" # Docker net to use
   exposedbydefault = false # Should containers be proxied by default?
 
-  exposedByDefault = false
-  watch = true
-{% if docker_socket_proxy_enabled %}
-  network = "{{ docker_socket_proxy_network }}"
-  endpoint = "tcp://{{docker_socket_proxy_name}}:{{docker_socket_proxy_port}}"
-{% else %}
-  network = "{{ traefik_public_network }}"
-  endpoint = "unix:///var/run/docker.sock"
-{% endif %}
+# Specify logging parameters
+[log]
+  level = "{{ 'DEBUG' if traefik_debug else 'ERROR' }}"
 
 # To work with both static (this config) & dynamic configurations
 # Can't do both in same config file in v2, use file provider to load dynamic

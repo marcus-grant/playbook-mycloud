@@ -102,49 +102,9 @@
       traefik.http.routers.whoami.entrypoints: websecure
       traefik.http.routers.whoami.tls.certresolver: le
 
-# - name: Traefik Docker Container
-#   # vars:
-#   #   trvols:
-#   #     - '{{ traefik_data_dir }}/traefik.toml:/traefik.toml'
-#   #     - '{{ traefik_data_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml'
-#   #     - '{{ traefik_data_dir }}/acme.json:/acme.json'
-#   #   sockvol: '/var/run/docker.sock:/var/run/docker.sock:ro'
-#   #   pubnet: ['{{ traefik_public_network }}']
-#   #   socknet: '{{ docker_socket_proxy_network }}'
-#   #   traefikenv:
-#   #     DOCKER_HOST: >
-#   #       'tcp://{{ docker_socket_proxy_name }}:{{ docker_socket_proxy_port }}'
-#   community.docker.docker_container:
-#     name: traefik
-#     state: started
-#     container_default_behavior: compatibility
-#     restart_policy: unless-stopped
-#     image: '{{ traefik_image }}'
-#     # network_mode: bridge
-#     network_mode: '{{ traefik_public_network }}'
-#     # networks: "{{ pubnet + [socknet] if docker_socket_proxy_enabled else pubnet }}"
-#     # networks:
-#     #   - name: '{{ traefik_public_network }}'
-#     #   - name: '{{ docker_socket_proxy_network }}'
-#     ports:
-#       - "{{ traefik_http_port | default('80') }}:80"
-#       - "{{ traefik_https_port | default('443') }}:443"
-#       - "{{ traefik_admin_port | default('8080')}}:8080"
-#     # env:
-#     # # '{{ traefikenv if docker_socket_proxy_enabled else none }}'
-#     #   DOCKER_HOST: >
-#     #     'tcp://{{ docker_socket_proxy_name }}:{{ docker_socket_proxy_port }}'
-#     # volumes: "{{ trvols + [sockvol] if docker_socket_proxy_enabled else trvols }}"
-#     volumes:
-#       - '{{ traefik_data_dir }}/traefik.toml:/traefik.toml'
-#       - '{{ traefik_data_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml'
-#       - '{{ traefik_data_dir }}/acme.json:/acme.json'
-#       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-#   register: varTraefik
-
-# - name: Restart docker container traefik when its task changes
-#   community.docker.docker_container:
-#     name: traefik
-#     container_default_behavior: compatibility
-#     restart: true
-#   when: varTraefik.changed
+- name: Var traefik_debug = true is insecure, change before committing code!!!
+  assert:
+    that: "not traefik_debug"
+    fail_msg: 'traefik_debug = true is insecure, please change to false!'
+    quiet: true
+  when: traefik_debug
