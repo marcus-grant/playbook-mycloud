@@ -30,7 +30,7 @@
 - name: Restart docker container dock-sock-prox when its task changes it
   community.docker.docker_container:
     name: docker-socket-proxy
-    container_default_behavior: compatibility
+    container_default_behavior: 'compatibility'
     restart: true
   when: varDockSockProx.changed and docker_socket_proxy_enabled
 
@@ -99,7 +99,7 @@
       traefik.enable: 'true'
       traefik.http.routers.whoami.rule: 'Host(`whoami.{{base_domain}}`)'
       traefik.http.routers.whoami.entrypoints: websecure
-      traefik.http.routers.whoami.tls.certresolver: le
+      traefik.http.routers.whoami.tls.certresolver: lets-encrypt
 
 - name: Var traefik_debug = true is insecure, change before committing code!!!
   assert:
