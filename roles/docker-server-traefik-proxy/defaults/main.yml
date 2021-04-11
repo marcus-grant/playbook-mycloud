@@ -28,3 +28,6 @@ git_db_image_tag: latest
 git_db_container_enable: true
 git_docker_network: bridge
 git_indexer_enable: false
+git_port_http: '3000'
+git_port_ssh: '48513'
+git_subdomain: 'git'

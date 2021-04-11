@@ -41,10 +41,14 @@
       network_mode: 'bridge'
       networks:
         - name: '{{ git_docker_network }}'
+      ports: # This is only open for the sake of tunneling in with DB GUIs
+        - '5432:5432'
       env:
         POSTGRES_USER: '{{ git_user }}'
         POSTGRES_PASSWORD: '{{ git_db_passwd }}'
         POSTGRES_DB: '{{ git_user }}'
+        USERMAP_UID: '{{ git_uid | string }}'
+        USERMAP_GID: '{{ git_gid | string }}'
       volumes:
         - '{{ git_home }}/db:/var/lib/postgresql/data'
   
@@ -59,8 +63,8 @@
       networks:
         - name: '{{ git_docker_network }}'
       ports:
-        - '3000:3000'
-        - '222:22'
+        - '{{ git_port_http }}:3000'
+        - '{{ git_port_ssh }}:22'
       env:
         USER_UID: '{{ git_uid | string }}'
         USER_GID: '{{ git_gid | string }}'
@@ -69,6 +73,8 @@
         DB_NAME: '{{ git_user }}'
         DB_USER: '{{ git_user }}'
         DB_PASSWD: '{{ git_db_passwd }}'
+        SSH_DOMAIN: '{{ git_subdomain }}.{{ base_domain }}'
+        SSH_PORT: '22'
       volumes:
         - '{{ git_home }}/data:/data'
         - '{{ git_home }}/log:/log'
@@ -77,18 +83,18 @@
         - '/etc/localtime:/etc/localtime:ro'
       labels:
         traefik.enable: 'true'
-        traefik.http.routers.git.entrypoints: 'http'
-        traefik.http.routers.git.rule: 'Host(`git.{{ base_domain }}`)'
-        traefik.http.middlewares.git-https-redirect.redirectscheme.scheme:
-          'https'
-        traefik.http.routers.git.middlewares: 'git-https-redirect'
-        traefik.http.routers.git-secure.entrypoints: 'https'
-        traefik.http.routers.git-secure.rule: 'Host(`git.{{ base_domain }}`)'
-        traefik.http.routers.git-secure.tls: 'true'
-        traefik.http.routers.git-secure.tls.certresolver: 'http'
-        traefik.http.routers.git-secure.service: 'git'
-        traefik.http.services.git.loadbalancer.server.port: '8000'
-        traefik.docker.network: '{{ git_docker_network }}'
+        traefik.http.routers.git.rule: 'Host(`{{ git_subdomain }}.{{ base_domain }}`)'
+        traefik.http.routers.git.tls: 'true'
+        traefik.http.routers.git.tls.certresolver: 'lets-encrypt'
+        traefik.http.services.git.loadbalancer.server.port: '{{ git_port_http }}'
+  
+  - name: 'Firewall - ACCEPT Gitea SSH traffic port {{ custom_ssh_port }}'
+    iptables:
+      chain: INPUT
+      destination_port: '{{ git_port_ssh }}'
+      jump: ACCEPT
+      protocol: tcp
+    
 
   when: gitea_enabled | default(false)
   tags: ['git', 'gitea']
