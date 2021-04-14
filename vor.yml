@@ -18,12 +18,11 @@
         name: '{{ item }}'
         state: present
       loop:
-        - python-pip
-        - python-docker
         - python3
         - python3-setuptools
         - python3-pip
         - python3-docker
+        - git
       tags: ['init','pre','apt']
     - name: Install some pip packages
       pip:
