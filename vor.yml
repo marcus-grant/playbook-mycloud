@@ -32,6 +32,8 @@
         - stormssh
       tags: ['init', 'pre', 'pip']
   roles:
+    - role: marcus-grant.mydotfiles
+      tags: ['dots', 'dotfiles']
     - role: geerlingguy.ntp
       tags: ['ntp']
     - role: hetzner-box

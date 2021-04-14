@@ -114,17 +114,24 @@ dotfiles_git_server_base_url: 'github.com'
 dotfiles_git_username: 'marcus-grant'
 dotfiles_use_ssh: true
 dotfiles:
+  bash:
+    repo_name: 'dots-bash'
+    local_subdir_name: 'bash'
+    version: 'main'
+    links:
+      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc.bash'}
+      - {dest: '~/.bash_profile', src: '~/.dots/bash/bashprofile.bash'}
   vim:
     repo_name: 'dots-vim'
     local_subdir_name: 'vim'
-    version: 'master'
+    version: 'main'
     links:
       - {dest: '~/.vim', src: '~/.dots/vim'}
       - {dest: '~/.vimrc', src: '~/.dots/vim/vimrc'}
   tmux:
     repo_name: 'dots-tmux'
     local_subdir_name: 'tmux'
-    version: 'master'
+    version: 'main'
     links:
       - {dest: '~/.tmux', src: '~/.dots/tmux'}
       - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
