@@ -1,0 +1,26 @@
+---
+# For now these will be used as simpler vault variable references
+# General Admin Settings
+admin_user: '{{ vault_admin_user }}'
+admin_email: '{{ vault_admine_email }}'
+admin_password: '{{ vault_admin_password }}'
+admin_ssh_password: '{{ vault_admin_ssh_password }}'
+service_password: '{{ vault_service_password }}'
+
+# Domains
+base_domain: '{{ vault_base_domain_hetzner }}'
+
+# Hbox configs
+hbox_ssh_key_name: '{{ vault_hbox_ssh_key_name }}'
+hbox_remote_user: '{{ vault_boks_user }}'
+
+### MySQL
+mysql_root_password: '{{ vault_mysql_root_password }}'
+
+### Traefik
+traefik_admin_email: '{{ vault_admin_email }}'
+traefik_admin_htpasswd: '{{ vault_traefik_admin_htpasswd }}'
+
+### Git/Gitea
+git_user_passwd: '{{ vault_git_user_passwd }}'
+git_db_passwd: '{{ vault_git_db_passwd }}'

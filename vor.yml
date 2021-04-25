@@ -2,8 +2,8 @@
 - hosts: vor
   gather_facts: true
   become: true
-  vars_files:
-    - group_vars/vault.yml
+  # vars_files:
+  #   - group_vars/vault.yml
   handlers:
     - import_tasks: handlers.yml
   pre_tasks:

@@ -3,28 +3,26 @@
 # Ansible Settings
 ansible_python_interpreter: auto
 
-# Domains
-base_domain: '{{ vault_base_domain_hetzner }}'
+# # Domains
+# base_domain: '{{ vault_base_domain_hetzner }}'
 
 # time_zone: America/New_York
 time_zone: Europe/Stockholm
-admin_user: '{{ vault_admin_user }}'
+# admin_user: '{{ vault_admin_user }}'
 
 # Hbox Configs
-hbox_ssh_key_name: '{{ vault_hbox_ssh_key_name }}'
-hbox_remote_user: '{{ vault_boks_user }}'
+# hbox_ssh_key_name: '{{ vault_hbox_ssh_key_name }}'
+# hbox_remote_user: '{{ vault_boks_user }}'
 hbox_mount_point: /mnt/hbox
 
 ### NTP Settings
 ntp_enabled: true  # (true) | false don't use on containerized VM (docker/vbox)
 ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
-ntp_manage_config: true  # (false) | true, whether to manage /etc/ntp.conf
-ntp_area: ''  # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
-ntp_servers:  # defaults to below world pool (only works manage config)
-  - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-  - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-  - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-  - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+# ntp_servers:  # defaults to below world pool (only works manage config)
+#   - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+#   - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+#   - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+#   - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
 ntp_restrict:  # whitelists access for these hosts, loopback only by default
   - "127.0.0.1"
   - "::1"
@@ -33,7 +31,7 @@ ntp_restrict:  # whitelists access for these hosts, loopback only by default
 # https://github.com/geerlingguy/ansible-role-mysql
 mysql_user_home: /root
 mysql_root_username: root
-mysql_root_password: '{{ vault_mysql_root_password }}'
+# mysql_root_password: '{{ vault_mysql_root_password }}'
 mysql_enabled_on_startup: true
 mysql_packages:  # This sets up mariaDB as the MySQL replacement
   - mariadb-client
@@ -46,7 +44,7 @@ mysql_packages:  # This sets up mariaDB as the MySQL replacement
 # Use this to enable or disable admin user access, forcing sudo & root
 docker_group_admin_user: false  # disable docker group access for admin
 docker_edition: 'ce'  # ce or ee
-docker_home: /mnt/docker
+# docker_home: /mnt/docker
 # docker_image_directory: '{{ docker_home }}/images'
 docker_storage_driver: overlay2
 docker_package_state: latest  # present, absent, or latest
@@ -69,8 +67,8 @@ docker_socket_proxy_image: tecnativa/docker-socket-proxy:latest
 traefik_setup: true
 traefik_debug: false
 traefik_api_port: '8880' # Marked for removal if not used in template
-traefik_admin_email: '{{ vault_admin_email }}'
-traefik_admin_htpasswd: '{{ vault_traefik_admin_htpasswd }}'
+# traefik_admin_email: '{{ vault_admin_email }}'
+# traefik_admin_htpasswd: '{{ vault_traefik_admin_htpasswd }}'
 traefik_image: traefik:2.4.8
 # These are merely the default location pointing to the tasks--
 # named volume 'traefik' in the default /var/lib/docker/volumes location.
@@ -83,8 +81,8 @@ traefik_open_dashboard_port: true
 gitea_enabled: true
 git_gid: 10002
 git_uid: 10002
-git_user_passwd: '{{ vault_git_user_passwd }}'
-git_db_passwd: '{{ vault_git_db_passwd }}'
+# git_user_passwd: '{{ vault_git_user_passwd }}'
+# git_db_passwd: '{{ vault_git_db_passwd }}'
 git_indexer_enable: true
 git_docker_network: '{{ traefik_public_network }}'
 git_subdomain: 'git'
