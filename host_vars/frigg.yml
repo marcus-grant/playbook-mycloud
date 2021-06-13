@@ -1,57 +1,60 @@
 ---
 ### General
-admin_user: '{{ vault_admin_user }}'
+# ansible_python_interpreter: auto
+ansible_python_interpreter: /usr/bin/python3
+# admin_user: '{{ vault_admin_user }}'
 admin_group: wheel
-timezone: America/New_York
+timezone: Europe/Stockholm
 
-### Network/Firewall
+### Firewalld
 firewalld_default_zone: internal
 network_default_interface: eno1
-
-### Remote (ie cockpit)
 cockpit_enable: true
-
-
-### Services
-services_base_dir: /mnt/services
-services_timeout_start_sec: 30
-services_restart_sec: 30
 
 ### QEMU
 qemu_install: true
 qemu_gui_enable: true
 qemu_images_location: /mnt/vm
 
+### NTP
+ntp_enabled: true  # (true) | false don't use on containerized VM (docker/vbox)
+ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
+ntp_manage_config: false  # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: 'se'  # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
+# ntp_servers:  # defaults to below world pool (only works manage config)
+#   - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+#   - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+#   - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+#   - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+ntp_restrict:  # whitelists access for these hosts, loopback only by default
+  - "127.0.0.1"
+  - "::1"
+
 ### Package Installs
-installer_packages:
-  - {method: yum, name: openssh-server}
-  - {method: yum, name: openssl}
-  - {method: yum, name: wget}
-  - {method: yum, name: curl}
-  - {method: yum, name: unzip}
-  - {method: yum, name: git}
-  - {method: yum, name: vim}
-  - {method: yum, name: tmux}
-  - {method: yum, name: fzf}
-  - {method: yum, name: fd-find}
-  - {method: yum, name: ripgrep}
-  - {method: yum, name: tree}
-  - {method: yum, name: ranger}
-  - {method: yum, name: ncdu}
-  - {method: yum, name: htop}
-  - {method: yum, name: iotop}
-  - {method: yum, name: tldr}
+installed_packages:
+  - python3
+  - python3-setuptools
+  - python3-pip
+  - python3-docker
+  - git
+  - vim
+  - tmux
+  - fd-find
+  - fzf
+  - tree
+  - ncdu
+  - bpytop
+  - libvirt-daemon
+  - cryptsetup
+  - udisks2-lvm2
+  - cockpit-storaged
+  - cockpit-machines
 
-###
-### Docker Settings & Container Settings
-###
-
-### General Settings
+### General Docker Settings
 # Use this to enable or disable admin user access, forcing sudo & root
 docker_group_admin_user: false  # disable docker group access for admin
 docker_edition: 'ce'  # ce or ee
-docker_home: /mnt/docker
-docker_image_directory: '{{ docker_home }}/images'
+# docker_home: /mnt/docker
 docker_storage_driver: overlay2
 docker_package_state: latest  # present, absent, or latest
 docker_service_state: started  # (started) | stopped *
@@ -60,76 +63,30 @@ docker_restart_handler_state: restarted  # what to do with service after role
 docker_install_compose: true  # (true) | false
 docker_compose_path: /usr/local/bin/docker-compose  # path to compose bin
 
-### UniFi
-unifi_gid: 10010
-unifi_uid: 10010
-unifi_docker_directory: '{{ docker_home }}/unifi'
-
-### Gitea
-gitea_enable: true
-gitea_seperate_net_location: false
-gitea_setup_app_here: false  # for seperate install
-gitea_setup_db_here: false  # for seperate install
-gitea_app_port: 10200
-gitea_db_port: 10201  # used on seperate hosts for less addr. collision
-gitea_ssh_port: 10222
-gitea_db_host: 'db:{{ gitea_db_port }}'
-gitea_gid: 10002
-gitea_uid: 10002
-gitea_db_passwd: '{{ vault_gitea_db_passwd }}'
-gitea_user_passwd: '{{ vault_gitea_user_passwd }}'
-gitea_dir: '{{ docker_home }}/gitea'
-
-###
-### Pod Settings
-###
-
-### Pods General Settings
-container_default_engine: docker
-pods_base_dir: /mnt/pods
-pods_volumes_dir: '{{ pods_base_dir }}/volumes'
-pods_services_dir: '{{ pods_base_dir }}/services'
-
-### HelloPod
-hello_pod_enable: true
-
-### UniFi
-unifi_pod_dir: '{{ pods_volumes_dir }}/unifi'
-unifi_pod_service_file: '{{ pods_services_dir }}/unifi.service'
-unifi_pod_image: jacobalberty/unifi:latest
-
-# TODO: Test whether this is even necessary
-# dotfiles root directory, where all seperate dotfiles subdirectories go
-# dotfiles_local_root_dir: '~/.dots'
-# dotfiles_git_server_base_url: 'github.com'
-# dotfiles_git_username: 'marcus-grant'
-# dotfiles_use_ssh: true
-# dotfiles:
-#   bash:
-#     repo_name: 'dots-bash'
-#     local_subdir_name: 'bash'
-#     version: 'master'
-#     links:
-#       - { dest: '~/.bashrc', src: '~/.dots/bash/bashrc' }
-#       - { dest: '~/.profile', src: '~/.dots/bash/profile' }
-#       - { dest: '~/.bash_profile', src: '~/.dots/bash/bash_profile' }
-#   vim:
-#     repo_name: 'dots-vim'
-#     local_subdir_name: 'vim'
-#     version: 'master'
-#     links:
-#       - { dest: '~/.vim', src: '~/.dots/vim' }
-#       - { dest: '~/.vimrc', src: '~/.dots/vim/vimrc' }
-#   neovim:
-#     repo_name: 'dots-neovim'
-#     local_subdir_name: 'neovim'
-#     version: 'master'
-#     links:
-#       - { dest: '~/.config/nvim', src: '~/.dots/neovim' }
-#   tmux:
-#     repo_name: 'dots-tmux'
-#     local_subdir_name: 'tmux'
-#     version: 'master'
-#     links:
-#       - { dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf' }
-#       - { dest: '~/.tmux.conf.local', src: '~/.dots/tmux/.tmux.conf.local' }
+### Dotfiles
+dotfiles_local_root_dir: '~/.dots'
+dotfiles_git_server_base_url: 'github.com'
+dotfiles_git_username: 'marcus-grant'
+dotfiles_use_ssh: true
+dotfiles:
+  bash:
+    repo_name: 'dots-bash'
+    local_subdir_name: 'bash'
+    version: 'main'
+    links:
+      - {dest: '~/.bashrc', src: '~/.dots/bash/rc.bash'}
+      - {dest: '~/.bash_profile', src: '~/.dots/bash/profile.bash'}
+  vim:
+    repo_name: 'dots-vim'
+    local_subdir_name: 'vim'
+    version: 'main'
+    links:
+      - {dest: '~/.vim', src: '~/.dots/vim'}
+      - {dest: '~/.vimrc', src: '~/.dots/vim/vimrc'}
+  tmux:
+    repo_name: 'dots-tmux'
+    local_subdir_name: 'tmux'
+    version: 'main'
+    links:
+      - {dest: '~/.tmux', src: '~/.dots/tmux'}
+      - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
