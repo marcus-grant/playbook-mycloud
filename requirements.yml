@@ -9,6 +9,7 @@ roles:
   - name: geerlingguy.ntp
   - name: geerlingguy.docker
   - name: geerlingguy.mysql
+  - name: m3nu.ansible_role_borgbackup
 collections:
   - name: community.general
   - name: ansible.posix
