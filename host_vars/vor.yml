@@ -18,6 +18,8 @@ hbox_mount_point: /mnt/hbox
 ### NTP Settings
 ntp_enabled: true  # (true) | false don't use on containerized VM (docker/vbox)
 ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
+ntp_manage_config: false  # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: 'se'  # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
 # ntp_servers:  # defaults to below world pool (only works manage config)
 #   - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
 #   - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
