@@ -92,21 +92,15 @@ git_port_http: '3000'
 git_port_ssh: '48513'
 
 ### Installer Role (Context-Less Program Installs)
-installer_packages:
-  - { method: apt, name: openssl }
-  - { method: apt, name: unzip }
-  - { method: apt, name: git }
-  - { method: apt, name: vim }
-  - { method: apt, name: tmux }
-  - { method: apt, name: fzf }
-  - { method: apt, name: fd-find }
-  - { method: apt, name: ripgrep }
-  - { method: apt, name: tree }
-  - { method: apt, name: ranger }
-  - { method: apt, name: ncdu }
-  - { method: apt, name: htop }
-  - { method: apt, name: iotop }
-
+installed_packages:
+        - python3
+        - python3-setuptools
+        - python3-pip
+        - python3-docker
+        - git
+        - vim
+        - fd-find
+        - fzf
 
 ### Dotfiles
 dotfiles_local_root_dir: '~/.dots'
