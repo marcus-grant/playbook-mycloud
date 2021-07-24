@@ -1,0 +1,69 @@
+### General variables
+
+# Ansible Settings
+ansible_python_interpreter: auto
+admin_user: '{{ vault_admin_user }}'
+
+# # Domains
+# base_domain: '{{ vault_base_domain_hetzner }}'
+
+# time_zone: America/New_York
+time_zone: Europe/Stockholm
+# admin_user: '{{ vault_admin_user }}'
+
+### NTP Settings
+ntp_enabled: true  # (true) | false don't use on containerized VM (docker/vbox)
+ntp_timezone: '{{ time_zone }}'  # (Etc/UTC) | many others
+ntp_manage_config: false  # (false) | true, whether to manage /etc/ntp.conf
+ntp_area: 'se'  # defaults to none (world), check http://bit.ly/2Hyqoh0 for others
+ntp_restrict:  # whitelists access for these hosts, loopback only by default
+  - "127.0.0.1"
+  - "::1"
+
+### General Settings
+
+### Installer Role (Context-Less Program Installs)
+installed_packages:
+        - python3
+        - python3-setuptools
+        - python3-pip
+        - python3-docker
+        - curl
+        - wget
+        - git
+        - vim
+        - fd-find
+        - fzf
+        - ripgrep
+        - ncdu
+        - tree
+        - podman
+        - buildah
+
+### Dotfiles
+dotfiles_local_root_dir: '~/.dots'
+dotfiles_git_server_base_url: 'github.com'
+dotfiles_git_username: 'marcus-grant'
+dotfiles_use_ssh: true
+dotfiles:
+  bash:
+    repo_name: 'dots-bash'
+    local_subdir_name: 'bash'
+    version: 'main'
+    links:
+      - {dest: '~/.bashrc', src: '~/.dots/bash/rc.bash'}
+      - {dest: '~/.bash_profile', src: '~/.dots/bash/profile.bash'}
+  vim:
+    repo_name: 'dots-vim'
+    local_subdir_name: 'vim'
+    version: 'main'
+    links:
+      - {dest: '~/.vim', src: '~/.dots/vim'}
+      - {dest: '~/.vimrc', src: '~/.dots/vim/vimrc'}
+  tmux:
+    repo_name: 'dots-tmux'
+    local_subdir_name: 'tmux'
+    version: 'main'
+    links:
+      - {dest: '~/.tmux', src: '~/.dots/tmux'}
+      - {dest: '~/.tmux.conf', src: '~/.dots/tmux/.tmux.conf'}
