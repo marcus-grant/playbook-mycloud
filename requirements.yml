@@ -15,3 +15,4 @@ collections:
   - name: ansible.posix
   - name: community.docker
   - name: community.crypto
+  - name: containers.podman
