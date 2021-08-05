@@ -101,6 +101,7 @@ installed_packages:
         - vim
         - fd-find
         - fzf
+        - tmux
 
 ### Dotfiles
 dotfiles_local_root_dir: '~/.dots'
