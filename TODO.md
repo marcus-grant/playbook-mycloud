@@ -4,6 +4,9 @@ To-Do's
 In-Progress
 -----------
 
+- [ ] Add `cryptsetup` to pkgs on debian servers like freyja
+- [ ] Create a central borgbackup repo server on freyja
+    - like [here](https://borgbackup.readthedocs.io/en/stable/deployment/central-backup-server.html)
 - [ ] Merge this & workstation playbooks into one new repo
 - [ ] Move all todos to issues, starting with higher priority
 - [ ] YAMLLint & AnsibleLint entire mycloud+myworkstation project
