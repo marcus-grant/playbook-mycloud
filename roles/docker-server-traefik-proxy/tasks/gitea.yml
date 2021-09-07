@@ -43,6 +43,7 @@
         - name: '{{ git_docker_network }}'
       ports: # This is only open for the sake of tunneling in with DB GUIs
         - '5432:5432'
+      # user: '{{ git_uid | string }}:{{ git_gid | string }}'
       env:
         POSTGRES_USER: '{{ git_user }}'
         POSTGRES_PASSWORD: '{{ git_db_passwd }}'
