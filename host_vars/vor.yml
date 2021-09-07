@@ -11,8 +11,8 @@ time_zone: Europe/Stockholm
 # admin_user: '{{ vault_admin_user }}'
 
 # Hbox Configs
-# hbox_ssh_key_name: '{{ vault_hbox_ssh_key_name }}'
-# hbox_remote_user: '{{ vault_boks_user }}'
+hbox_ssh_key_name: '{{ vault_hbox_ssh_key_name }}'
+hbox_remote_user: '{{ vault_boks_user }}'
 hbox_mount_point: /mnt/hbox
 
 ### NTP Settings
@@ -90,6 +90,16 @@ git_docker_network: '{{ traefik_public_network }}'
 git_subdomain: 'git'
 git_port_http: '3000'
 git_port_ssh: '48513'
+# Backup settings
+backup_git_passphrase: '{{ vault_backup_git_passphrase }}'
+backup_git_repo: >
+  '{{ hbox_remote_user }}@{{ hbox_remote_user }}.your-storagebox.de:/gitea'
+backup_git_src_dirs: ['/home/git']
+backup_git_retention_policies:
+  keep_hourly: 6
+  keep_daily: 10
+  keep_weekly: 6
+  keep_monthly: 6
 
 ### Installer Role (Context-Less Program Installs)
 installed_packages:
@@ -107,15 +117,15 @@ installed_packages:
 dotfiles_local_root_dir: '~/.dots'
 dotfiles_git_server_base_url: 'github.com'
 dotfiles_git_username: 'marcus-grant'
-dotfiles_use_ssh: true
+dotfiles_use_ssh: false
 dotfiles:
   bash:
     repo_name: 'dots-bash'
     local_subdir_name: 'bash'
     version: 'main'
     links:
-      - {dest: '~/.bashrc', src: '~/.dots/bash/bashrc.bash'}
-      - {dest: '~/.bash_profile', src: '~/.dots/bash/bashprofile.bash'}
+      - {dest: '~/.bashrc', src: '~/.dots/bash/rc.bash'}
+      - {dest: '~/.bash_profile', src: '~/.dots/bash/profile.bash'}
   vim:
     repo_name: 'dots-vim'
     local_subdir_name: 'vim'
