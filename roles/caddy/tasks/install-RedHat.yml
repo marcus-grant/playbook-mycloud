@@ -1,0 +1,18 @@
+---
+- name: Install fedora copr plugin (dnf)
+  package:
+    name: dnf-command(copr)
+    state: present
+
+- name: Enable caddy repo
+  command: dnf copr enable -y @caddy/caddy
+  args:
+    warn: no
+  register: dnf_repo_enable
+  changed_when: false
+
+
+- name: Install caddy package
+  dnf:
+    name: caddy
+    state: present
