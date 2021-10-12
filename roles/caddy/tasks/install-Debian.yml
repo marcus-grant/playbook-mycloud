@@ -1,0 +1,14 @@
+---
+- name: Ensure caddy dependencies are installed
+  apt:
+    name:
+      - debian-keyring
+      - debian-archive-keyring
+      - apt-transport-https
+      - gnupg2
+      - curl
+    state: present
+
+# - name: Add Caddy apt key
+#   apt_key:
+#     url: "{{ "

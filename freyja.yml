@@ -20,10 +20,12 @@
   roles:
     # - role: marcus-grant.mydotfiles
     #   tags: ['dots', 'dotfiles']
-    - role: marcus_grant.dotfiles.bash
-      tags: [dotfiles,dots,bash]
     # - role: geerlingguy.ntp
     #   tags: ['ntp']
+    - role: marcus_grant.dotfiles.bash
+      tags: [dotfiles,dots,bash]
+    - role: caddy
+      tags: [selfhost,caddy]
 
 # Non-become play, put all things that should be run as the ssh user here
 # - this is opposed to root user
