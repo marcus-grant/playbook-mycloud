@@ -2,3 +2,9 @@
 # tasks file for caddy
 - name: Import the correct install task file
   include_tasks: "install-{{ ansible_os_family }}.yml"
+
+- name: Install Caddy
+  package:
+    name: "{{ caddy_package }}"
+    state: "{{ caddy_package_state }}"
+  notify: restart caddy
