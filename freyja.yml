@@ -17,18 +17,14 @@
         state: present
       loop: '{{ installed_packages }}'
       tags: ['init','pre','apt']
-    - name: Install some pip packages
-      pip:
-        name: '{{ item }}'
-      loop:
-        - stormssh
-      tags: ['init', 'pre', 'pip']
   roles:
     - role: marcus-grant.mydotfiles
       tags: ['dots', 'dotfiles']
     # - role: geerlingguy.ntp
     #   tags: ['ntp']
 
+# Non-become play, put all things that should be run as the ssh user here
+# - this is opposed to root user
 - hosts: freyja
   roles:
     - role: marcus-grant.mydotfiles
