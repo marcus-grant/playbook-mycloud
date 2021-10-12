@@ -18,8 +18,10 @@
       loop: '{{ installed_packages }}'
       tags: ['init','pre','apt']
   roles:
-    - role: marcus-grant.mydotfiles
-      tags: ['dots', 'dotfiles']
+    # - role: marcus-grant.mydotfiles
+    #   tags: ['dots', 'dotfiles']
+    - role: marcus_grant.dotfiles.bash
+      tags: [dotfiles,dots,bash]
     # - role: geerlingguy.ntp
     #   tags: ['ntp']
 
@@ -27,5 +29,7 @@
 # - this is opposed to root user
 - hosts: freyja
   roles:
-    - role: marcus-grant.mydotfiles
-      tags: ['dots', 'dotfiles']
+    # - role: marcus-grant.mydotfiles
+    #   tags: ['dots', 'dotfiles']
+    - role: marcus_grant.dotfiles.bash
+      tags: [dotfiles,dots,bash]

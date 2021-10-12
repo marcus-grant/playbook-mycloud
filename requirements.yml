@@ -16,3 +16,7 @@ collections:
   - name: community.docker
   - name: community.crypto
   - name: containers.podman
+  - name: https://github.com/marcus-grant/ansible-collection-dotfiles
+    type: git
+    version: main
+
